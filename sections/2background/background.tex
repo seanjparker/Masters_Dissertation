@@ -1,10 +1,19 @@
 \chapter{Background and Related Work}
 In this chapter, we detail the background and prior research that underpins the work described in later chapters. Further, we include an explanation of the theoretical concepts, both reinforcement learning and graph neural networks, which we have used extensively in this work.
 
-\section{Approaches to optimising deep learning models}
+\section{Introduction to Deep Learning Models}
+This section discusses the way in which machine learning models are represented for efficient execution on physical hardware devices. First, we discuss dataflow graphs and the mapping of tensor operations to the graphs and finally recent methods to optimise the graphs prior to execution.
+
+\subsection{Approaches to optimising deep learning models}
 Over the past decade, there has been a rapid development of various deep learning architectures that aim to solve a specific task. Common examples include convolutional networks (popularised by AlexNet then ResNets, etc), transformer networks that have seen use in the modelling and generation of language. Recurrent networks that have shown to excel at learning long and short trends in data.
 
-Importantly, the fundamental building blocks of the networks have largely remained unchanged. As the models become more complex, it becomes untenable to manually optimise the models to reduce the execution time on hardware. Therefore, there is extensive work in ways to both automatically optimise the models, or, alternatively apply a set of hand-crafted optimisations.
+Importantly, the fundamental building blocks of the networks have largely remained unchanged.  As the networks become more complex, it becomes untenable to manually optimise the networks to reduce the execution time on hardware. Therefore, there is extensive work in ways to both automatically optimise the models, or, alternatively apply a set of hand-crafted optimisations.
+
+Tensorflow, a common machine learning framework is designed to greedily apply a set of pre-defined substitutions to an input graph in an attempt to optimise the graph. Tensorflow made use of low-level libraries such as cuBLAS for optimised matrix operations and cuDNN for convolutional kernels. Furthermore, Tensorflow also contains a set of 155 substitutions that are implemented in 53,000 lines of code; to complicate matters, new operators are continuously proposed, such as grouped or transposed convolutions, which leads to a large amount of engineering effort required to maintain the library.
+
+
+
+
 
 \section{Reinforcement Learning}
 \subsection{Model-Free}
