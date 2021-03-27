@@ -1,0 +1,75 @@
+%% 
+%% ACS project dissertation template. 
+%% 
+%% Currently designed for printing two-sided, but if you prefer to 
+%% print single-sided just remove ",two-side,open-right" from the 
+%% \documentclass[] line below. 
+%%
+%%
+%%   SMH, May 2010. 
+
+
+\documentclass[a4paper,12pt,twoside,openright]{report}
+
+
+%%
+%% EDIT THE BELOW TO CUSTOMIZE
+%%
+
+\def\authorname{Sean J.\ Parker\xspace}
+\def\authorcollege{Clare Hall\xspace}
+\def\authoremail{sjp240@cam.ac.uk}
+\def\dissertationtitle{Model-based Reinforcement Learning in Computer Systems}
+\def\wordcount{0}
+
+
+%\usepackage[dvips]{epsfig,graphics} 
+\usepackage{epsfig,graphicx,verbatim,parskip,tabularx,setspace,xspace}
+
+%% START OF DOCUMENT
+\begin{document}
+
+
+%% FRONT-MATTER (TITLE PAGE, DECLARATION, ABSTRACT, ETC) 
+\pagestyle{empty}
+\singlespacing
+\input{titlepage}
+\onehalfspacing
+\input{declaration}
+\input{acknowledgements}
+\input{abstract}
+
+\pagenumbering{roman}
+\setcounter{page}{0}
+\pagestyle{plain}
+\tableofcontents
+\listoffigures
+\listoftables
+
+\onehalfspacing
+
+%% START OF MAIN TEXT 
+
+\include{sections/1intro/introduction}
+\pagenumbering{arabic} 
+\setcounter{page}{1} 
+
+\include{sections/2background/background}
+
+%\chapter{Design and Implementation}
+\chapter{Title}
+
+%\chapter{Evaluation} 
+\chapter{Title}
+
+%\chapter{Summary and Conclusions} 
+\chapter{Title}
+
+
+\appendix
+\singlespacing
+
+\bibliographystyle{unsrt} 
+%\bibliography{dissertation} 
+
+\end{document}

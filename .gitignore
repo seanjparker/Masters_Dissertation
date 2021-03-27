@@ -1,0 +1,11 @@
+__latexindent_temp.tex
+*.aux
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.synctex.gz
+*.toc
+.vscode
+.DS_Store
