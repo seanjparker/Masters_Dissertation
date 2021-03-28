@@ -8,11 +8,13 @@ Over the past decade, there has been a rapid development of various deep learnin
 
 Importantly, the fundamental building blocks of the networks have largely remained unchanged.  As the networks become more complex, it becomes untenable to manually optimise the networks to reduce the execution time on hardware. Therefore, there is extensive work in ways to both automatically optimise the models, or, alternatively apply a set of hand-crafted optimisations.
 
-Computation graphs are a way to graphically represent both the individual tensor operations in a model, and the connections (or data-flow) along the edges between nodes in the graph. Figure [TODO] shows how a simple perceptron, $\mathbf{w} \cdot \mathbf{x} + b$, can be represented graphically. Similarly, the whole model can be converted into a stateful dataflow graph in this manner.
+Computation graphs are a way to graphically represent both the individual tensor operations in a model, and the connections (or data-flow) along the edges between nodes in the graph. Figure [TODO] shows how a perceptron computing, $y = \texttt{ReLU}(\mathbf{w} \cdot \mathbf{x} + b)$, can be represented graphically.
 
-% The primary benefits of this representation are twofold. First,  is that we can efficiently execute operations at the nodes and trace data-flow along the edges.
+% TODO include figure of perceptron
 
-\subsection{Approaches to optimising deep learning models}
+Similarly, the whole model can be converted into a stateful dataflow graph in this manner. By using a stateful dataflow (or computation) graph, we can use any optimisation technique for backpropogation of the model loss though the graph [TODO rewrite last sentence]. We consider two key benefits of this representation. First, we can execute the model on any hardware device as the models have a single, uniform representation. Secondly, it allows for pre-execution optimisations based on the host device, for example, we may perform different optimisations for executing on a GPU compared to a TPU.
+
+\subsection{Current approaches to optimising deep learning models}
 
 Tensorflow \cite{tensorflow2015-whitepaper}, a common machine learning framework is designed to greedily apply a set of pre-defined substitutions to an input graph in an attempt to optimise the graph. Tensorflow made use of low-level libraries such as cuBLAS \cite{cublas2008} for optimised matrix operations and cuDNN \cite{chetlur2014cudnn} for convolutional kernels. Furthermore, Tensorflow also contains a set of 155 substitutions that are implemented in 53,000 lines of code; to complicate matters, new operators are continuously proposed, such as grouped or transposed convolutions, all of which leads to a large amount of engineering effort required to maintain the library.
 
@@ -21,8 +23,20 @@ TensorRT and TVM
 Metaflow and TASO
 
 \section{Reinforcement Learning}
+Reinforcement learning (RL) is a field in machine learning, broadly, it aims to compute a control policy such that an agent can maximise its cumulative reward from the environment. Formally, RL has its foundations in Markov Decision Processes (MDPs) which are represented as a tuple $\langle \mathcal{S}, \mathcal{A}, \mathcal{P}_a, \mathcal{R}_a \rangle$ where:
+
+\begin{itemize}
+  \item $\mathcal{S}$, is a finite set of states
+  \item $\mathcal{A}$, is a finite set of actions
+  \item $\mathcal{P}_a$, is the state transition probability that an action $a$ in state $s_t$ leads to a state $s'_{t+1}$
+  \item $\mathcal{R}_a$, is the reward from the environment after taking an action $a$ between state $s_t$ and $s'_{t+1}$
+\end{itemize}
+
+
+
+In the following sections we discuss the two key paradigms that exist in Reinforcement learning and the current research in both areas. 
+
 \subsection{Model-Free}
 \subsection{Model-Based}
-\subsection{Comparison}
 
 \section{Graph Neural Networks}
