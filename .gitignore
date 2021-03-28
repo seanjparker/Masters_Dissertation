@@ -9,3 +9,5 @@ __latexindent_temp.tex
 *.toc
 .vscode
 .DS_Store
+*.bbl
+*.blg
