@@ -21,9 +21,9 @@ Similarly, the whole model can be converted into a stateful dataflow graph in th
 
 \subsection{Current approaches to optimising deep learning models}
 
-Due to the prevalence and importance of machine learning, especially deep networks, there is a focus on finding ways decrease the inference runtime and by extension, increasing the model throughput. All major frameworks such as Tensorflow \cite{tensorflow2015-whitepaper}, PyTorch \cite{}, MXNet, and Caffe have some level of support for performing pre-execution optimisations. However, the process of performing such optimisations is often time-consuming and cannot be completed in real-time. Rather, it is to use a deep learning optimisation library such as cuDNN \cite{chetlur2014cudnn}.
+Due to the prevalence and importance of machine learning, especially deep networks, there is a focus on finding ways decrease the inference runtime and by extension, increasing the model throughput. All major frameworks such as TensorFlow \cite{Tensorflow2015-whitepaper}, PyTorch \cite{}, MXNet, and Caffe have some level of support for performing pre-execution optimisations. However, the process of performing such optimisations is often time-consuming and cannot be completed in real-time. Rather, it is to use a deep learning optimisation library such as cuDNN \cite{chetlur2014cudnn}.
 
-%common machine learning framework is designed to greedily apply a set of pre-defined substitutions to an input graph in an attempt to optimise the graph. Tensorflow made use of low-level libraries such as cuBLAS \cite{cublas2008} for optimised matrix operations and cuDNN \cite{chetlur2014cudnn} for convolutional kernels. Furthermore, Tensorflow also contains a set of 155 substitutions that are implemented in 53,000 lines of code; to complicate matters, new operators are continuously proposed, such as grouped or transposed convolutions, all of which leads to a large amount of engineering effort required to maintain the library.
+%common machine learning framework is designed to greedily apply a set of pre-defined substitutions to an input graph in an attempt to optimise the graph. TensorFlow made use of low-level libraries such as cuBLAS \cite{cublas2008} for optimised matrix operations and cuDNN \cite{chetlur2014cudnn} for convolutional kernels. Furthermore, TensorFlow also contains a set of 155 substitutions that are implemented in 53,000 lines of code; to complicate matters, new operators are continuously proposed, such as grouped or transposed convolutions, all of which leads to a large amount of engineering effort required to maintain the library.
 
 %TensorRT \cite{tensorrt2017} provides a high-performance SDK to optimise the inference of models via a combination of techniques such as layout and tensor fusion, auto-tuning kernels, and multi-stream execution. The SDK acts as both the optimisation and execution engine that lies between the ML framework and physical hardware. Importantly, it is not involved during the training process, rather, it assumes for the best possible performance that the developer 
 TVM
@@ -31,30 +31,48 @@ TVM
 Metaflow and TASO
 
 \section{Reinforcement Learning}
-Reinforcement learning (RL) is a sub-field in machine learning, broadly, it aims to compute a control policy such that an agent can maximise its cumulative reward from the environment. It has powerful applications in environments where a model that describes the semantics of the system are not available and the agent must itself discover the optimal strategy via a reward signal. Formally, RL is a class of learning problem that can be framed as a Markov decision processes (MDP) when the MDP that describes the system is not known \cite{bellman1957}; they are represented as a tuple $\langle \mathcal{S}, \mathcal{A}, \mathcal{P}_a, \mathcal{R}_a \rangle$ where:
+Reinforcement learning (RL) is a sub-field in machine learning, broadly, it aims to compute a control policy such that an agent can maximise its cumulative reward from the environment. It has powerful applications in environments where a model that describes the semantics of the system are not available and the agent must itself discover the optimal strategy via a reward signal.
+
+- Can also mention POMDPs
+
+Formally, RL is a class of learning problem that can be framed as a Markov decision processes (MDP) when the MDP that describes the system is not known \cite{bellman1957}; they are represented as a 5-tuple $\langle \mathcal{S}, \mathcal{A}, \mathcal{P}_a, \mathcal{R}_a, \rho_0 \rangle$ where:
 
 \begin{itemize}
-  \item $\mathcal{S}$, is a finite set of states
-  \item $\mathcal{A}$, is a finite set of actions
-  \item $\mathcal{P}_a$, is the state transition probability that an action $a$ in state $s_t$ leads to a state $s'_{t+1}$
-  \item $\mathcal{R}_a$, is the reward from the environment after taking an action $a$ between state $s_t$ and $s'_{t+1}$
+  \item $\mathcal{S}$, is a finite set of valid states
+  \item $\mathcal{A}$, is a finite set of valid actions
+  \item $\mathcal{P}_a$, is the transition probability function that an action $a$ in state $s_t$ leads to a state $s'_{t+1}$
+  \item $\mathcal{R}_a$, is the reward function, it returns the reward from the environment after taking an action $a$ between state $s_t$ and $s'_{t+1}$
+  \item $\rho_0$, is the starting state distribution
 \end{itemize}
 
 % TODO: add citations
-We aim to compute a policy, denoted by $\pi$, that when given a state $s \in \mathcal{S}$, returns an action $a \in \mathcal{A}$ with the optimisation objective being to find a control policy $\pi^*$ that maximises the \textit{expected reward} from the environment defined by \ref{equ:expec-rew}. Notably, we can control the `far-sightedness' of the policy by tuning the discount factor $\gamma \in [0, 1]$. As $\gamma$ tends to 1, the policy considers the rewards further in the future but with a lower weight as the distant expected reward may be an imperfect prediction.
+We aim to compute a policy, denoted by $\pi$, that when given a state $s \in \mathcal{S}$, returns an action $a \in \mathcal{A}$ with the optimisation objective being to find a control policy $\pi^*$ that maximises the \textit{expected reward} from the environment defined by \ref{equ:expec-rew}. Importantly, we can control the `far-sightedness' of the policy by tuning the discount factor $\gamma \in [0, 1)$. As $\gamma$ tends to 1, the policy will consider the rewards further in the future but with a lower weight as the distant expected reward may be an imperfect prediction.
 
 \begin{equation}
   \label{equ:expec-rew}
   \pi^* = \argmax_\pi~\mathbb{E} \left[ \sum^\infty_{t=0} \gamma^t~\mathcal{R}_t \right]
 \end{equation}
 
-Recent success with reinforcement learning can be attributed, in part, to the success of modern deep learning function approximators, such as neural networks, which make learning the solutions far more efficient in practise.
-
-has been successfully applied to a wide range of fields, for example, robotic control tasks \cite{openai2019solving}, datacenter power management, device placement, and, playing both perfect and imperfect information games to a super-human level. Reinforcement learning excels when applied to environments in which actions may have long-term, inter-connected dependencies that are difficult to learn or model with traditional machine learning techniques.
+Classic RL problems are formulated as MDPs in which we have a finite state space, however, such methods quickly become inefficient with large state spaces that we consider with applications such as Atari and Go. Therefore, we take advantage of modern deep learning function approximators, such as neural networks, that makes learning the solutions far more efficient in practise. We have seen many successfully applications in a wide range of fields, for example, robotic control tasks \cite{openai2019solving}, datacenter power management, device placement, and, playing both perfect and imperfect information games to a super-human level. Reinforcement learning excels when applied to environments in which actions may have long-term, inter-connected dependencies that are difficult to learn or model with traditional machine learning techniques.
 
 In the following sections we discuss the two key paradigms that exist in reinforcement learning and the current research in both areas and the application to systems tasks.
 
 \subsection{Model-Free and Model-Based RL}
 
+Model-free and model-based are the two main approaches to reinforcement learning, however, the distinction between the two can be somewhat nebulous.
+
+- Model-based is more sample efficient
+
+- Model-free has had more applications with greater success, e.g. in Atari, Go
+
+- In systems environments, it can be costly for the agent to interact with the environment (which is the opposite of Atari emulators)
+
+- Approaches for overcoming the same inefficiency, by almost brute force, by using massive amounts of compute via distributed training
+
+- Model-based RL is concerned with learning a model of the underlying environment which it learns to simulate its dynamics -- thereby agents can be cheaply and quickly trained in this `imagined/dreamed/hallucinogenic' environment (famous example is AlphaZero where it was given an explicit model of the environment) : two options, learn a model, or be given a model
+
+- Model-free, either policy optimisation (PPO) or Q-learning (and lots in between)
+
+\subsection{World Models}
 
 \section{Graph Neural Networks}
