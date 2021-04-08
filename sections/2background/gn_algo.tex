@@ -1,0 +1,27 @@
+{\SetAlgoNoLine
+\begin{algorithm}[H]
+
+ \For{$k \in \lbrace1\dots N^e \rbrace$}{
+   $\mathbf{e}'_k \leftarrow \phi^e (\mathbf{e}_k, \mathbf{v}_{r_k}, \mathbf{v}_{s_k}, \mathbf{u})$
+ }
+
+ \For{$i \in \lbrace1\dots N^n \rbrace$}{
+   \textbf{let} $E'_i = \lbrace (\mathbf{e}'_k, r_k, s_k) \rbrace_{r_k=i, k=1:N^e}$ \\
+   $\bar{\mathbf{e}}'_i \leftarrow \rho^{e\rightarrow v} (E'_i)$ \\
+   $\bar{\mathbf{v}}'_i \leftarrow \phi^{v} (\bar{\mathbf{e}}'_i, \mathbf{v}_i, \mathbf{u})$
+ }
+
+ \textbf{let} $V' = {\mathbf{v'}_{i=1:N^v}}$\\
+ \textbf{let} $E' = {(\mathbf{e}'_k, r_k, s_k)}_{k=1:n^e}$\\
+
+ $\bar{\mathbf{e}}' \leftarrow \rho^{e\rightarrow u} (E')$ \\
+
+ $\bar{\mathbf{v}}' \leftarrow \rho^{v\rightarrow u} (V')$ \\
+
+ $\bar{\mathbf{u}}' \leftarrow \phi^{u} (\bar{\mathbf{e}}', \bar{\mathbf{v}}', \mathbf{u})$ \\
+
+ \Return{$(E', V', \mathbf{u}')$}
+
+ \caption{Steps of computation in a full GN block}
+ \label{algo2}
+\end{algorithm}}
