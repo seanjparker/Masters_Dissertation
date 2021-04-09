@@ -21,7 +21,7 @@ Similarly, the whole model can be converted into a stateful dataflow graph in th
 
 \subsection{Current approaches to optimising deep learning models}
 
-Due to the prevalence and importance of machine learning, especially deep networks, there is a focus on finding ways decrease the inference runtime and by extension, increasing the model throughput. All major frameworks such as TensorFlow \cite{Tensorflow2015-whitepaper}, PyTorch \cite{}, MXNet, and Caffe have some level of support for performing pre-execution optimisations. However, the process of performing such optimisations is often time-consuming and cannot be completed in real-time. Rather, it is to use a deep learning optimisation library such as cuDNN \cite{chetlur2014cudnn}.
+Due to the prevalence and importance of machine learning, especially deep networks, there is a focus on finding ways decrease the inference runtime and by extension, increasing the model throughput. All major frameworks such as TensorFlow \cite{Tensorflow2015-whitepaper}, PyTorch \cite{pytorch}, MXNet \cite{chen2015mxnet}, and Caffe \cite{jia2014caffe} have some level of support for performing pre-execution optimisations. However, the process of performing such optimisations is often time-consuming and cannot be completed in real-time. Rather, it is common to use a deep learning optimisation library such as cuDNN \cite{chetlur2014cudnn} that directly optimise individual tensor operations.
 
 %common machine learning framework is designed to greedily apply a set of pre-defined substitutions to an input graph in an attempt to optimise the graph. TensorFlow made use of low-level libraries such as cuBLAS \cite{cublas2008} for optimised matrix operations and cuDNN \cite{chetlur2014cudnn} for convolutional kernels. Furthermore, TensorFlow also contains a set of 155 substitutions that are implemented in 53,000 lines of code; to complicate matters, new operators are continuously proposed, such as grouped or transposed convolutions, all of which leads to a large amount of engineering effort required to maintain the library.
 
@@ -33,7 +33,7 @@ Metaflow and TASO
 \section{Reinforcement Learning}
 Reinforcement learning (RL) is a sub-field in machine learning, broadly, it aims to compute a control policy such that an agent can maximise its cumulative reward from the environment. It has powerful applications in environments where a model that describes the semantics of the system are not available and the agent must itself discover the optimal strategy via a reward signal.
 
-- Can also mention POMDPs
+- TODO Can also mention POMDPs
 
 Formally, RL is a class of learning problem that can be framed as a Markov decision processes (MDP) when the MDP that describes the system is not known \cite{bellman1957}; they are represented as a 5-tuple $\langle \mathcal{S}, \mathcal{A}, \mathcal{P}_a, \mathcal{R}_a, \rho_0 \rangle$ where:
 
@@ -61,9 +61,12 @@ In the following sections we discuss the two key paradigms that exist in reinfor
 
 Model-free and model-based are the two main approaches to reinforcement learning, however, with recent work such as \cite{app10196685, kaiser2020modelbased, robine2021smaller}, the distinction between the two is becoming somewhat nebulous; it is possible to use a hybrid approach that aims to improve the sample efficiency of the agent by training model-free agents directly in the imagined environment.
 
-The notable differences between the two approaches are summarised in Table [TODO: x].
+The major branching point that distinguishes between model-free and model-based approaches is in what the agent learns during training. A model-free agent, in general, could learn a governing policy, action-value function, or, environment model. On the other hand, model-based agents commonly either learn an explicit representation of the policy $\pi_\theta(a | s)$ using planning, such as AlphaZero \cite{silver2017mastering} or ExIt \cite{anthony2017thinking}. Alternatively, we can use use data augmentation methods to learn a representation of the underlying environment behaviour, and either only use fictitious model, or augment real experiences to train an agent in the domain \cite{kaiser2020modelbased, feinberg2018modelbased, freeman2019learning}.
 
-- Model-based is more sample efficient
+Understandably, a relevant question is why one would prefer a model-free over model-based approach and what are the benefits of the respective methods. The primary benefit of model-based RL is that is has far greater sample efficiency, meaning, the agent requires in total, less interactions with the real environment than the model-free counterparts. If we can either provide, or learn, a model of the environment it allows the agent to plan ahead, choosing from a range of possible trajectories its actions to maximise its reward. 
+
+Unfortunately, learning a model of the environment is not trivial. The most challenging problem that must be overcome is that if the model is imperfect, the agent may learn to exploit the models deficiencies, thus making it useless (or almost useless) in the real environment.
+
 
 - Model-free has had more applications with greater success, e.g. in Atari, Go
 
