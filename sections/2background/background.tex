@@ -91,8 +91,29 @@ Mixture Density Networks (MDNs) are a class of neural networks first described b
 \subsubsection{Recurrent Neural Networks}
 Recurrent Neural Networks are class of neural networks that allows for previous outputs to be re-used as inputs to sequential nodes while maintaining and updating their own hidden state. Primarily, RNNs are commonly used in the field of speech recognition and natural language processing as they can process inputs of an arbitrary length with a constant model size. In practise however, RNNs suffer from being unable to utilise long chains of information due to the vanishing/exploding gradient problem; the gradient can change exponentially changing in proportion to the number of layers in the network \cite{Hochreiter:01book}.
 
-Motivated by the desire to overcome the limitations of RNNs, and avoid workarounds such as gradient clipping.
+Motivated by the desire to overcome the limitations of RNNs, Hochreiter et al. \cite{hochreiter1997long} developed long-short term memory by describing Constant Error Carousel (CECs). The idea was further improved by Gers et al. \cite{gers1999learning} with the modern LSTM that is made up of four gates, each with a specific purpose that influences the behaviour of each cell and in combination, the properties of the network as a whole. Figure \ref{fig:bg:lstm} shows the internal structure of an LSTM module.
 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.75\columnwidth]{sections/2background/images/lstm.png}
+  \caption[Structure of an unrolled LSTM]{LSTM}
+  \label{fig:bg:lstm}
+\end{figure}
+
+An LSTM can be described used four ``gates'', where a gate influences a property of the behaviour of the LSTM cell. The \textit{forget} gate dictates if the information stored in the cell should be erased by observing the inputs $[h_{t-1}, x_t]$ it outputs a value in the range $[0, 1]$, using the sigmoid function $\sigma$, where $1$ means to completely forget the state. Secondly, the \textit{input} gate calculates the new information to be stored in the cell state, generating a vector of candidates $\tilde{C}_t$. The \textit{update} gate is to determine how much of the past state sequence should be considered using the outputs from the \textit{forget} gate, the prior state $C_{t-1}$ and the input gate $\tilde{C}_t$. Finally, the \textit{output} gate determines the LSTM cell output based on the current, filtered state of the cell.
+
+\begin{center}
+  \begin{align*}
+    f_t &= \sigma (W_f \cdot [h_{t-1}, x_t] + b_f) && (1)~\text{Forget gate} \\
+    i_t &= \sigma (W_i \cdot [h_{t-1}, x_t] + b_i) && (2)~\text{Input gate} \\
+    \tilde{C}_t &= \tanh (W_C) \cdot [h_{t-1}, x_t] + b_C) && (3)~\text{Candidate value} \\
+    C_t &= f_t C_{t-1} + i_t \tilde{C}_t && (4)~\text{Update previous cell state} \\
+    o_t &= \sigma (W_o [h_{t-1}, x_t] + b_o) && (5)~\text{Output gate} \\
+    h_t &= o_t \cdot \tanh (C_t) && (6)~\text{Hidden state}
+  \end{align*}
+\end{center}
+
+There are a number of popular varients of LSTM cells such as peephole LSTMs, GRUs, Grid LSTMs and ConvLSTM. There are many areas which have been revolutionised by the usage of LSTM cells in the network architecture. As we will describe in [TODO: ref chapter], LSTM cells are a key to allow world models to learn to simulate the behaviour of the environment state-action transitions.
 
 \section{Graph Neural Networks}
 
