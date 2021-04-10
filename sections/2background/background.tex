@@ -117,12 +117,12 @@ There are a number of popular varients of LSTM cells such as peephole LSTMs, GRU
 
 \section{Graph Neural Networks}
 
+Graph neural network are a class of neural network that has seen considerable focus in recent years, with many successful applications being devised around the central idea of leveraging the structure of the graph input to aid in predicting attributes about the graph itself. The motivation factor for the use of graph networks is that, similar to the way in which convolutional neural networks revolutionised the application of neural networks to high dimensional inputs with images, video and audio - we desire an efficient way to generalise CNNs onto graphs.
+
+Battaglia et al. \cite{battaglia2018relational} defines a generalisable framework for entity/relation based reasoning with three main operators that act on edges, nodes, and on global features using user-defined functions. Within the framework described by Battaglia et al., a graph is defined as $G = (u, V, E)$ where $u$ are the global attributes, $V = {\mathbf{v}_i}_i={1:N^v}$ is the set of vertices (with a cardinality of $N^v$) and finally, $E = {(\mathbf{e}_k, r_k, s_k)}_k={1:N^e}$ is the set of edge attributes with their sources and corresponding vertices.
+
+We can define three update functions and three \textit{aggregation} function. The update functions are $\phi^e$, $\phi^v$ and $\phi^u$ for edges, vertices and globals respectively. The aggregation functions are $\rho^{e \rightarrow v} (E'_i)$, $\rho^{e \rightarrow u} (E')$, and $\rho^{v \rightarrow u} (V')$, for edges, vertices and globals respectively. To perform a single update given a set of input edges and vertices, we simply apply the three update and aggregation functions sequentially in the order of edges $\rightarrow$ vertices $\rightarrow$ globals. Algorithm \ref{algo2} describes, in general, the graph network update.
+
+% An inductive bias is a set of assumptions that allows for the algorithm to prioritise one solution over another, while being independent from the previously observed data. 
+
 \input{sections/2background/gn_algo.tex}
-
-- Form of neural network that has seen lots of active research recently
-
-- Can be viewed in similar way to CNNs
-
-- Graph network, Edge block -> Node block -> global block
-
-- We use it to process the graphs and produce a latent tensor (from the global block) which we can learn using
