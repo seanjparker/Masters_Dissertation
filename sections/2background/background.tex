@@ -74,13 +74,19 @@ Unfortunately, learning a model of the environment is not trivial. The most chal
 Model-based approaches have been successfully applied in various domains such as board games, video games, systems optimisation and robotics. Despite the apparent advantages of model-based RL with regards to reduced computation time, model-free reinforcement learning is by far the most popular approach and massive amounts of compute, typically by distributed training on clusters of GPUs/TPUs, is required overcome the sample inefficiency of model-free algorithms.
 
 \subsection{World Models}
-hhhh
+World models, first introduced by Ha and Schmidhuber, motivated and described an approach to model-based reinforcement learning in which we learn a model of the real environment using function approximators and train an agent using only predictions from the world model. Figure \ref{fig:bg:mb-rl} shows the design to utilise a world model as substitute for the real environment. In practise, a world model can be broken down into three main components. A visual model, $V$, that encodes the input into a latent vector $z$, a memory model, $M$ the integrates the historical state to produce a representation that can be used as planning for future actions and rewards. Finally, a controller, $C$ that uses both $V$ and $M$ to predict an action from the action set, $a \in \mathcal{A}$.
+
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.75\columnwidth]{sections/2background/images/mb-rl.png}
-  \caption[Model-based Reinforcement Learning End-To-End System]{Diagrammatic representation of a world-model made up from an encoder (V) that transforms the input into latent space, a `memory' module, M, that learns the behaviour of the environment from the latent vector $z$ and a controller, C, that is trained using the latent vector of the encoder and the output features from the memory to choose an action which is either applied to the real or imagined environment. \cite{ha2018worldmodels}}
+  \caption[Model-based Reinforcement Learning End-To-End System]{Diagrammatic representation of a world-model made up from an encoder (V) that transforms the input into latent space, a `memory' module, M, that learns the behaviour of the environment from the latent vector $z$ and a controller, C, that is trained using the latent vector of the encoder and the output features from the memory to choose an action which is either applied to the real or imagined environment. Figure adapted from \cite{ha2018worldmodels}.}
   \label{fig:bg:mb-rl}
 \end{figure}
+
+Typically, a world model is trained using rollouts of the real environment that have been sampled using a random agent acting in the environment. The aim is to learn to accurately predict, given a state $s_t$, the next state $s_{t+1}$ and the associated reward $r_{t+1}$. After training, the controller, $C$, can either learn using only observations from the world model, so called ``training in a dream''. Alternatively, the world model can be used to augment the observations from the real environment samples or used only for planning. To construct the world model, if the environment is simple and deterministic, it is possible to use a deep neural network to act as the world model, however, for environments that are only partially observable, are more complex model is required, such as Recurrent Neural Networks (RNNs) or Long-short term memory (LSTMs).
+
+\subsubsection{Mixture Density Networks and RNNs}
+TODO MDN-RNNs
 
 \section{Graph Neural Networks}
 
