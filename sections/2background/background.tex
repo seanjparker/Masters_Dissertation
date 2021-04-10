@@ -12,7 +12,7 @@ Computation graphs are a way to graphically represent both the individual tensor
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.75\columnwidth]{sections/2background/images/bitmap}
+  \includegraphics[width=0.75\columnwidth]{sections/2background/images/dataflow}
   \caption[Single perceptron as a dataflow (computation) graph]{The operations shown in purple are the nodes of the computation graph which take an arbitraty number of inputs, performs a computation at the node and produces an output. The blue nodes represent the input nodes for tensors. The directed edges show the flow of tensors through the graph.}
   \label{fig:bg:perceptron}
 \end{figure}
@@ -29,7 +29,7 @@ Due to the prevalence and importance of machine learning, especially deep networ
 
 Alternatively, TVM and TensorRT can be used to optimise deep learning models and offer greater performance gains compared to the more commonly used frameworks such as TensorFlow and PyTorch. They also use greedy rule-based optimisation approaches. TODO - either expand or remove
 
-Rather than using a rule-based optimisation approach, it is possible to use more sophisticated algorithms to optimise deep learning models at the expense of computation time. Jia et al. used a cost-based backtracking search to iteratively search through the state space of possible graphs that are provably equivalent \cite{jia2019taso}. As opposed to using rule-based optimisation that applied hand-crafted optimisations, TASO generates the candidate subgraphs automatically and formally proves the transformations are equivalent using an automated theorem prover. Furthermore, Jia et al. showed that by jointly optimising both the data layout of the subgraph transformation, and the transformation itself, TASO achieves a speedup  compared to performing the operations sequentially.
+Rather than using a rule-based optimisation approach, it is possible to use more sophisticated algorithms to optimise deep learning models at the expense of computation time. Jia et al. used a cost-based backtracking search to iteratively search through the state space of possible graphs that are provably equivalent \cite{jia2019taso}. As opposed to using rule-based optimisation that applied hand-crafted optimisations, TASO generates the candidate subgraphs automatically and formally proves the transformations are equivalent using an automated theorem prover. Furthermore, Jia et al. showed that by jointly optimising both the data layout of the subgraph transformation, and the transformation itself, TASO achieves a speedup compared to performing the operations sequentially.
 
 A key benefit of using a cost-based approach is that the search can take into account far more complex interactions between the transformed kernels. For example, if we apply a series of transformations $T_1, \cdots, T_i$, the runtime may increase, and, due to the first set of transformations, we can now apply $T_{i + 1}, \cdots, T_{i + j}$, after all transformations have been applied, it is possible that we see a net decrease in runtime. By increasing the search space of transformations in this way, it is possible to increase the runtime of deep learning models by up to 3x \cite{jia2019taso, jia2019optimizing}.
 
@@ -65,24 +65,22 @@ In the following sections we discuss the two key paradigms that exist in reinfor
 
 Model-free and model-based are the two main approaches to reinforcement learning, however, with recent work such as \cite{app10196685, kaiser2020modelbased, robine2021smaller}, the distinction between the two is becoming somewhat nebulous; it is possible to use a hybrid approach that aims to improve the sample efficiency of the agent by training model-free agents directly in the imagined environment.
 
-The major branching point that distinguishes between model-free and model-based approaches is in what the agent learns during training. A model-free agent, in general, could learn a governing policy, action-value function, or, environment model. On the other hand, model-based agents commonly either learn an explicit representation of the policy $\pi_\theta(a | s)$ using planning, such as AlphaZero \cite{silver2017mastering} or ExIt \cite{anthony2017thinking}. Alternatively, we can use use data augmentation methods to learn a representation of the underlying environment behaviour, and either only use fictitious model, or augment real experiences to train an agent in the domain \cite{kaiser2020modelbased, feinberg2018modelbased, freeman2019learning}.
+The major branching point that distinguishes between model-free and model-based approaches is in what the agent learns during training. A model-free agent, in general, could learn a governing policy, action-value function, or, environment model. On the other hand, model-based agents commonly either learn an explicit representation of the parameterised policy $\pi_\theta$ using planning, such as AlphaZero \cite{silver2017mastering} or ExIt \cite{anthony2017thinking}. Alternatively, we can use use data augmentation methods to learn a representation of the underlying environment behaviour, and either only use fictitious model, or augment real experiences to train an agent in the domain \cite{kaiser2020modelbased, feinberg2018modelbased, freeman2019learning}.
 
-Understandably, a relevant question is why one would prefer a model-free over model-based approach and what are the benefits of the respective methods. The primary benefit of model-based RL is that is has far greater sample efficiency, meaning, the agent requires in total, less interactions with the real environment than the model-free counterparts. If we can either provide, or learn, a model of the environment it allows the agent to plan ahead, choosing from a range of possible trajectories its actions to maximise its reward. 
+Understandably, a relevant question is why one would prefer a model-free over model-based approach and what are the benefits of the respective methods. The primary benefit of model-based RL is that is has far greater sample efficiency, meaning, the agent requires in total, less interactions with the real environment than the model-free counterparts. If we can either provide, or learn, a model of the environment it allows the agent to plan ahead, choosing from a range of possible trajectories its actions to maximise its reward. The agent that acts in this ``\textit{imagined}'' or ``\textit{hallucinogenic}'' environment can be a simple MLP \cite{ha2018worldmodels} to a model-free agent trained using modern algorithms such as PPO, A2C or Q-learning. Further, training an agent in the world model is comparatively cheap, especially in the case of complex systems environments where a single episode an be on the order of hundreds of milliseconds.
 
-Unfortunately, learning a model of the environment is not trivial. The most challenging problem that must be overcome is that if the model is imperfect, the agent may learn to exploit the models deficiencies, thus making it useless (or almost useless) in the real environment.
+Unfortunately, learning a model of the environment is not trivial. The most challenging problem that must be overcome is that if the model is imperfect, the agent may learn to exploit the models deficiencies, thus making it effectively useless in the real environment.
 
-
-- Model-free has had more applications with greater success, e.g. in Atari, Go
-
-- In systems environments, it can be costly for the agent to interact with the environment (which is the opposite of Atari emulators)
-
-- Approaches for overcoming the same inefficiency, by almost brute force, by using massive amounts of compute via distributed training
-
-- Model-based RL is concerned with learning a model of the underlying environment which it learns to simulate its dynamics -- thereby agents can be cheaply and quickly trained in this `imagined/dreamed/hallucinogenic' environment (famous example is AlphaZero where it was given an explicit model of the environment) : two options, learn a model, or be given a model
-
-- Model-free, either policy optimisation (PPO) or Q-learning (and lots in between)
+Model-based approaches have been successfully applied in various domains such as board games, video games, systems optimisation and robotics. Despite the apparent advantages of model-based RL with regards to reduced computation time, model-free reinforcement learning is by far the most popular approach and massive amounts of compute, typically by distributed training on clusters of GPUs/TPUs, is required overcome the sample inefficiency of model-free algorithms.
 
 \subsection{World Models}
+hhhh
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.75\columnwidth]{sections/2background/images/mb-rl.png}
+  \caption[Model-based Reinforcement Learning End-To-End System]{Diagrammatic representation of a world-model made up from an encoder (V) that transforms the input into latent space, a `memory' module, M, that learns the behaviour of the environment from the latent vector $z$ and a controller, C, that is trained using the latent vector of the encoder and the output features from the memory to choose an action which is either applied to the real or imagined environment. \cite{ha2018worldmodels}}
+  \label{fig:bg:mb-rl}
+\end{figure}
 
 \section{Graph Neural Networks}
 
