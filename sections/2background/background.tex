@@ -83,10 +83,16 @@ World models, first introduced by Ha and Schmidhuber, motivated and described an
   \label{fig:bg:mb-rl}
 \end{figure}
 
-Typically, a world model is trained using rollouts of the real environment that have been sampled using a random agent acting in the environment. The aim is to learn to accurately predict, given a state $s_t$, the next state $s_{t+1}$ and the associated reward $r_{t+1}$. After training, the controller, $C$, can either learn using only observations from the world model, so called ``training in a dream''. Alternatively, the world model can be used to augment the observations from the real environment samples or used only for planning. To construct the world model, if the environment is simple and deterministic, it is possible to use a deep neural network to act as the world model, however, for environments that are only partially observable, are more complex model is required, such as Recurrent Neural Networks (RNNs) or Long-short term memory (LSTMs).
+Typically, a world model is trained using rollouts of the real environment that have been sampled using a random agent acting in the environment. The aim is to learn to accurately predict, given a state $s_t$, the next state $s_{t+1}$ and the associated reward $r_{t+1}$. After training, the controller, $C$, can either learn using only observations from the world model, so called ``training in a dream''. Alternatively, the world model can be used to augment the observations from the real environment samples or used only for planning. To construct the world model, if the environment is simple and deterministic, it is possible to use a deep neural network to act as the world model, however, for environments that are only partially observable, a more complex model is required such as Recurrent Neural Networks (RNNs) or Long-short term memory (LSTMs). The following two sub-sections describe the fundamental concepts required to construct a world model.
 
-\subsubsection{Mixture Density Networks and RNNs}
-TODO MDN-RNNs
+\subsubsection{Mixture Density Networks}
+Mixture Density Networks (MDNs) are a class of neural networks first described by Christopher Bishop \cite{bishop1994mixture} that were designed to deal with problems where there is an inherent uncertainty in the predictions. Given an input to the network, we wish to output a range of possible outputs conditioned on the input where we can assess the probability of each outcome. MDNs are commonly parameterised by a neural network that is trained using supervised learning and outputs the parameters for multiple mixture of Gaussians.
+
+\subsubsection{Recurrent Neural Networks}
+Recurrent Neural Networks are class of neural networks that allows for previous outputs to be re-used as inputs to sequential nodes while maintaining and updating their own hidden state. Primarily, RNNs are commonly used in the field of speech recognition and natural language processing as they can process inputs of an arbitrary length with a constant model size. In practise however, RNNs suffer from being unable to utilise long chains of information due to the vanishing/exploding gradient problem; the gradient can change exponentially changing in proportion to the number of layers in the network \cite{Hochreiter:01book}.
+
+Motivated by the desire to overcome the limitations of RNNs, and avoid workarounds such as gradient clipping.
+
 
 \section{Graph Neural Networks}
 
