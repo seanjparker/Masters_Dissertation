@@ -1,7 +1,45 @@
-\section{Project Aims}
+\chapter{Problem Specification}
 
-\section{Problem Specification}
+In this chapter we will introduce the graph optimisation problem and establish the baseline performance using cost-based backtracking optimisation. Next, we will frame the optimisation problem in the RL domain by describing the system environment, the reward calculation and the state-action space. Additionally, we describe the RL agents trained in the model-free and model-based domains.
 
-\chapter{Model Optimisation Environment}
+\section{Optimisation of deep learning graph}
 
-\section{State-Action Space}
+- Dataflow graph from DL framework is converted to an internal representation (TASO)
+
+- Pre-generate a set of formally verified graph substitutions that can be used to apply to graphs
+
+- Using a performance measure, calculate the estimated runtime before and after graph transformation has been applied
+
+- Perform data layout + graph xfer optimisation simultaneously
+
+\subsection{Baselines}
+
+- Cost-based backtracking algorithm
+
+- Estimation of runtime characteristics for each tensor op --> imperfect estimation
+
+- Using real runtime is difficult as it takes longer to simulate and large variation in measurements between runs
+
+\section{Framing in the RL domain}
+
+\subsection{System environment}
+
+- Use TASO backend as the foundation for the system environment
+
+- It has the ability to apply a specified transformation to the dataflow graph and return the transformed graph
+
+- RL environments only need one function ``step'' that takes some action, applies the action to the environments internal state and returns the updated state
+
+- Rewards are the TASO estimation of the runtime, we modified TASO to extract more detailed runtime measurements for performing reward engineering (ref chapter)
+
+\subsection{Reward determination}
+
+- Runtime difference
+
+- Inclusion of detailed measurements
+
+- Real-time measurements instead of estimated?
+
+- Look up research on RL rewards (what makes a good reward signal)
+
+\subsection{State-Action space}
