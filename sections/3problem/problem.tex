@@ -1,16 +1,33 @@
 \chapter{Problem Specification}
 
-In this chapter we will introduce the graph optimisation problem and establish the baseline performance using cost-based backtracking optimisation. Next, we will frame the optimisation problem in the RL domain by describing the system environment, the reward calculation and the state-action space. Additionally, we describe the RL agents trained in the model-free and model-based domains.
+In this chapter we will introduce the graph optimisation problem and establish the baseline performance using cost-based backtracking optimisation. Next, we will frame the optimisation problem in the RL domain by describing the system environment, the reward calculation and the state-action space. Additionally, we describe the RL agents trained in the model-free and model-based domains and we also highlight limitations in the application of reinforcement learning to this problem.
 
-\section{Optimisation of deep learning graph}
+\section{Introduction}
+The major deep learning frameworks such as TensorFlow \cite{tensorflow2015-whitepaper} and PyTorch \cite{pytorch} used greedy rule-based graph transformation prior to execution. Furthermore, in Chapter \ref{sec:bg:subsec:currentapp} we described the prior work upon which this work builds. Namely, we introduced the work by Jia et al. \cite{jia2019taso,jia2019optimizing} that proposed an approach for performing an offline optimisation of deep learning dataflow graphs using a recursive backtracking search in the action space. Specifically, the authors developed a framework that uses a pre-generated set of formally verified, semantically equivalent graph substitutions that can be used to modify the graph to search for a reduced runtime.
 
-- Dataflow graph from DL framework is converted to an internal representation (TASO)
+\section{Optimisation of deep learning graphs}
+Specifically, TensorFlow (TF) uses a system called \textit{``Grappler''} that is the default graph optimisation system in the TF runtime \cite{larsen2019tensorflow}. By natively performing the graph optimisation at runtime, it allows for a interoperable, transparent optimisation strategy via protocol buffers. To improve the performance of the underlying model, Grappler supports a range of features such as the pruning of dead nodes, removal of redundant computation and improved memory layouts. Concretely, Grappler was designed with three primary goals:
 
-- Pre-generate a set of formally verified graph substitutions that can be used to apply to graphs
+\begin{itemize}
+  \item Automatically improve performance through graph simplifications and high-level optimisations to benefit the most target architectures
+  \item Reduce device peak memory usage
+  \item Improve hardware utilisation by optimising device placement
+\end{itemize}
 
-- Using a performance measure, calculate the estimated runtime before and after graph transformation has been applied
+On the other hand, although Grappler can automatically optimise the data-flow graphs of deep learning models, such a complex optimisation system presents challenges. Firstly, significant engineering effort is required to implement, verify and test the optimiser to ensure the correctness of the graph rewrites rules; TF contains a set of 155 substitutions that are implemented in 53,000 lines of code; to further complicate matters, new operators are continuously proposed, such as grouped or transposed convolutions, all of which leads to a large amount effort expended to maintain the library. Secondly, and perhaps more importantly, as TF uses Grappler at runtime by default, it adds overhead to execution as extra graph conversions are performed at runtime rather than offline.
 
-- Perform data layout + graph xfer optimisation simultaneously
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.75\columnwidth]{sections/3problem/images/GraphOptimiser.jpg}
+  \caption[Architecture of graph optimisation system in TensorFlow]{The machine learning model is processed prior to execution by either Grappler, the static graph optimiser in TensorFlow, or via JIT compilation of the model using XLA. Figure adapted from \cite{larsen2019tensorflow}.}
+  \label{fig:problem:graph-optim}
+\end{figure}
+
+Alternatively, both TensorFlow, and more recently PyTorch, support automatic graph optimisation by JIT (just-in-time) compilation through XLA and the \texttt{torch.jit} package respectively. In Figure \ref{fig:problem:graph-optim} we can see a high-level view of the components of the optimisation system. In order to motivate the reasoning to perform offline optimisation rather than JIT optimisation we  consider the work proposed by Jia et al. in both MetaFlow and TASO, the systems they design can be used as a drop-in replacement of the Grappler and/or XLA compilation steps.
+
+TASO applies all possible candidate transformations at each step and estimates the runtime (or cost) of the final graph. Next, TASO chooses the highest performing candidates for the proceeding iteration of candidate evaluations. Principally, this approach is superior to the naive greedy optimisation approach as we can use the estimated runtime to guide the search and forego immediate improved runtime to increase the potential search space of candidate graphs. In addition, as TASO operates at a graph level the optimisations it performs are orthogonal and can be combined with code generation techniques such as TVM \cite{chen2018tvm} or Astra \cite{sivathanu2019astra} to further improve overall performance. We also note that TASO performs tensor data layout and graph transformation simultaneously rather than sequentially. It has been shown that by considering it as a joint optimisation problem end-to-end inference runtime can be reduced by up to 1.5x \cite{jia2019taso, jia2019optimizing}.
+
+% However, using estimated runtime presents a challenge with respect to the exponential growth of search space at a rate of $O(N^T)$, where $N$ is the number of transformations and $T$ is the number of search steps.
 
 \subsection{Baselines}
 
@@ -20,7 +37,7 @@ In this chapter we will introduce the graph optimisation problem and establish t
 
 - Using real runtime is difficult as it takes longer to simulate and large variation in measurements between runs
 
-\section{Framing in the RL domain}
+\section{Reinforcement Learning forulation}
 
 \subsection{System environment}
 
@@ -32,6 +49,8 @@ In this chapter we will introduce the graph optimisation problem and establish t
 
 - Rewards are the TASO estimation of the runtime, we modified TASO to extract more detailed runtime measurements for performing reward engineering (ref chapter)
 
+\subsection{State-Action space}
+
 \subsection{Reward determination}
 
 - Runtime difference
@@ -41,5 +60,3 @@ In this chapter we will introduce the graph optimisation problem and establish t
 - Real-time measurements instead of estimated?
 
 - Look up research on RL rewards (what makes a good reward signal)
-
-\subsection{State-Action space}
