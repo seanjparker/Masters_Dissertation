@@ -1,0 +1,27 @@
+{\SetAlgoNoLine
+\begin{algorithm}[H]
+ \setstretch{1.0}
+ \textbf{Input}: Initial computation graph $\mathcal{G}_0$, a cost function \texttt{cost}($\mathcal{G}$), a list of valid graph substitutions $\lbrace S_1, \dots, S_m$, and the hyperparameter $\alpha$ \\
+
+ \textbf{Output}: An optimised computation graph $\mathcal{G}^*$
+
+ \texttt{//} $\mathcal{Q}$ is a priority queue of graphs sorted under \texttt{cost}.\\
+ $\mathcal{Q} = \lbrace \mathcal{G}_0 \rbrace$
+
+ \While{$\mathcal{Q} \neq \lbrace \rbrace$}{
+   $\mathcal{G} = \mathcal{Q}$.\texttt{dequeue()}\\
+   \For{$i = 1 \dots m$}{
+    $\mathcal{G}' = S_i(\mathcal{G})$ \\
+    \If{\texttt{cost}($\mathcal{G}'$) $<$ \texttt{cost}($\mathcal{G}^*$)}{
+      $\mathcal{G}^* = \mathcal{G}'$
+    }
+    \If{\texttt{cost}($\mathcal{G}'$) $< \alpha~\times$ \texttt{cost}($\mathcal{G}^*$)}{
+      $\mathcal{Q}$.\texttt{enqueue($\mathcal{G}'$)}
+    }
+  }
+ }
+ \Return{$\mathcal{G}^*$}
+
+ \caption{Cost-based backtracking search. Adapted from \cite{jia2019taso}.}
+ \label{algo3}
+\end{algorithm}}

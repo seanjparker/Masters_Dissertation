@@ -40,7 +40,6 @@ Next, we define that two computation graphs, $\mathcal{G}$ and $\mathcal{G}'$ ar
 
 An important problem in graph-level optimisation is that of defining a set of varied, applicable transformations that can be used to optimise the graphs. As previously noted, prior work such as TensorFlow use a manually defined set of transformations and optimise greedily. On the other hand, TASO uses a fully automatic method to generate candidate transformations by performing a hash-based enumeration over all possible DNN operators that result in a semantically equivalent computation graph.
 
-
 \begin{figure}[ht]
   % preliminary
   \sbox\twosubbox{%
@@ -59,18 +58,21 @@ An important problem in graph-level optimisation is that of defining a set of va
   \subcaptionbox{Common subgraph substitution \label{fig:problem:rewrite-graph2}}{
     \includegraphics[height=\twosubht]{sections/3problem/images/rewrite2.jpg}
   }
-  \caption{Two examples of trivial graph substitutions that does not impact the overall runtime of the computation graph}
+  \caption[Two examples of trivial graph substitutions]{Two examples of trivial graph substitutions that does not impact the overall runtime of the computation graph. The left sub-figure shows a simple renaming of the tensor inputs. The figure on the right shows that we have a common sub-graph between the source and the target graphs. In both cases we eliminate the duplicates as the hash of the two graphs will be identical.}
 \end{figure}
 
-In this work, we take the same approach as that of TASO and automatically generate the candidate graphs. We perform this as an offline step as it requires a large amount of computation to both generate and verify the candidate substitutions. To place an upper bound on the computation, we limit the input tensor size to a maximum of 4x4x4x4 when verifying the candidate substitutions. Following the generation and verification steps, we prune the collection to remove substitutions that are considered trivial and as such would not impact runtime. For example, trivial substitutions include input tensor renaming and common subgraphs, we show both techniques diagrammatically in Figure \ref{fig:problem:rewrite-graph1} and \ref{fig:problem:rewrite-graph2} respectively.
+In this work, we take the same approach as that of TASO and automatically generate the candidate graphs. We perform this as an offline step as it requires a large amount of computation to both generate and verify the candidate substitution; to place an upper bound on the computation, we limit the input tensor size to a maximum of 4x4x4x4 during the verification process. Following the generation and verification steps, we prune the collection to remove substitutions that are considered trivial and as such would not impact runtime. For example, trivial substitutions include input tensor renaming and common subgraphs, we show both techniques diagrammatically in Figure \ref{fig:problem:rewrite-graph1} and \ref{fig:problem:rewrite-graph2} respectively.
 
 \subsection{Baselines}
+In order to establish a baseline performance measure for performing graph-level optimisation of deep learning models we have two different sources. Firstly, we can measure the performance of a select number of deep learning models in the standard DL frameworks, TensorFlow and PyTorch. In this project, there are common, standardised mechanisms for evaluating the performance of models using these frameworks - we show the results of the baseline measurements in the following section.
 
-- Cost-based backtracking algorithm
+Secondly, in this work, we replicate the experiments as performed by Jia et al. \cite{jia2019taso} and use the results as our benchmark to compare our work against. However, for the majority of evaluated graphs we used a lower budget than that of the authors in the original paper. We found that using a lower search budget, without alteration of the hyperparameter $\alpha$, it did not result in a lower performance compared to the original experiments. Figure [TODO] shows the results of the heuristic search for the graph $\mathcal{G}^*$ and Figure [TODO] shows the relative performance of the methods on each chosen deep learning model. 
 
-- Estimation of runtime characteristics for each tensor op --> imperfect estimation
+% \input{sections/3problem/taso.tex}
 
-- Using real runtime is difficult as it takes longer to simulate and large variation in measurements between runs
+% - Estimation of runtime characteristics for each tensor op --> imperfect estimation
+
+% - Using real runtime is difficult as it takes longer to simulate and large variation in measurements between runs
 
 \section{Reinforcement Learning formulation}
 
