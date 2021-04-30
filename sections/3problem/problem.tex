@@ -81,20 +81,34 @@ In the following section we will describe how to represent the computation graph
 
 \subsection{System environment}
 
-In order to train a reinforcement learning agent, it necessary that we have access to an environment that, given the current environment state, the agent can take an action. After taking the chosen action, the environment is updated into a new state and the agent receives a reward signal. Typically, one uses a mature environment such as OpenAI Gym \cite{brockman2016openai} or OpenSpiel \cite{LanctotEtAl2019OpenSpiel} as the quality of the environment often has a significant effect on the stability of training.
+In order to train a reinforcement learning agent, it necessary that we have access to an environment that, given the current environment state, the agent can take an action. After taking the chosen action, the environment is updated into a new state and the agent receives a reward signal. Typically, one uses a mature environment such as OpenAI Gym \cite{brockman2016openai} or OpenSpiel \cite{LanctotEtAl2019OpenSpiel} as the quality of the environment often has a significant effect on the stability of training. Moreover, using an environment that uses a common interface allows researchers to implement algorithms with ease and, importantly, reproduce results from published conference papers.
 
-In our work, we implemented an environment that follows the standard of the OpenAI Gym API for environments, that is, we have a function \texttt{step(action)} that accepts a single parameter, the action requested by the agent to be performed in the environment. The \texttt{step} function returns a 4-tuple \texttt{(next\textunderscore state, reward, terminal, extra\textunderscore info)}. In order to simplify the implementation of the environment, we used the TASO backend to apply the chosen transformation at the requested location in the computation graph.
+In our work, we implemented an environment that follows the OpenAI Gym API standard stepping an environment, that is, we have a function \texttt{step(action)} that accepts a single parameter, the action requested by the agent to be performed in the environment. The \texttt{step} function returns a 4-tuple \texttt{(next\textunderscore state, reward, terminal, extra\textunderscore info)}. \texttt{extra\textunderscore info} is a dictionary which can store arbitrary data. The environment in our project has a structure that is shown diagrammatically in Figure [TODO].
 
-- Use TASO backend as the foundation for the system environment
+To simplify the implementation of the environment, we used made extensive use of the work by Jia et al. \cite{jia2019taso} with the open source version of TASO. We provide a computation graph and the chosen transformation and location; TASO then applies the requested transformation and returns the newly transformed graph. Further, we use internal TASO functions that calculates estimates of the runtime on the hardware device which we use as our reward signal for training the agent. During our experiments we modified TASO to extract detailed runtime measurements to analyse the rewards using a range of different reward formulae - we describe our approach further in section \ref{sec:prob:subsec:rwd}.
 
-- It has the ability to apply a specified transformation to the dataflow graph and return the transformed graph
-
-- Rewards are the TASO estimation of the runtime, we modified TASO to extract more detailed runtime measurements for performing reward engineering (ref chapter)
+The scope of our work meant that there was no existing prior work that applied reinforcement learning to the task of optimising deep learning computation graphs. Thus, we required an environment in which an agent can act efficiently. Due to the nature of systems environments, the interactions with the real-world environment can be often slow, especially compared to those such as Arcade Learning Environment \cite{Bellemare_2013}. An aim of this work was to train a simulated environment, a ``world model'', that if accurate in relation to the real environment, we can train an agent far more efficiently than would be possible with the real-environment. In section [TODO] we will further explore world models and evaluate our implementation.
 
 \subsection{State-Action space}
+In this project we modelled the state and action space in accordance with prior research, specifically we referenced work in a similar domain of system optimisation using reinforcement learning; Mirhoseini et al. \cite{mirhoseini2018hierarchical} used hierarchical RL with multiple actions to find the optimal device placement and Addanki et al. \cite{addanki2019placeto} that also aided in the design choice of input/output graph sizes.
+
+The environment expects two actions: 
+\begin{itemize}
+  \item Transformation (which we refer to as an \texttt{xfer}) to apply, \texttt{xfer\textunderscore ID}
+  \item Location at which to apply the transformation
+\end{itemize}
+Therefore, we define the action as 2-value tuple of (xfer\textunderscore, location). There is a special case for the xfer\textunderscore id. If this is N (i.e. 151), this is the no-op action. This will not apply any XFER to the graph, but instead end the current episode (the done value will be True and depending on the reward mechanism, the reward will be calculated).
+
+As explained in the previous section, we used an step-wise approach where at each iteration, we provide a 2-tuple of the transformation and location, to apply in the current state. The updated state from the environment is a 4-tuple consisting of \texttt{(graph\textunderscore tuple, xfer\textunderscore tuples, location\textunderscore masks, xfer\textunderscore mask)}.
+
+\texttt{xfer\textunderscore mask} refers to a binary mask that indicates the valid and invalid transformations that can be applied to the current computation graph as not every transformation can be applied to every graph. If the current graph has only four possible transformations that can be applied, all other transformations considered to be invalid. Thus, we return a boolean location mask where only valid transformations are set to 1, or \texttt{true}. This can be used to zero-out the model logits of invalid transformations (and thereby actions also) to make ensure the agent always selects a valid transformation from the set.
+
+Similarly, for each transformation selected by the agent, there are a number of valid locations where this transformation can be applied. We set a hardcoded, albeit configurable, limit the number of locations to 200 in this work. If the current graph has fewer than 100 possible for any given transformation, the remaining locations are considered invalid locations. Therefore, we again return a boolean location mask, which is named \texttt{location\textunderscore masks} in the 4-tuple defined above, which can be used to zero out the model logits of invalid locations.
+
+% We do this for every XFER, so this is a N x L array, where N is the number of XFERs (currently 151) and L is the maximum number of valid locations (per default 100).
 
 \subsection{Reward determination}
-
+\label{sec:prob:subsec:rwd}
 - Runtime difference
 
 - Inclusion of detailed measurements
