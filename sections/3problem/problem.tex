@@ -94,10 +94,10 @@ In this project we modelled the state and action space in accordance with prior 
 
 The environment expects two actions: 
 \begin{itemize}
-  \item Transformation (which we refer to as an \texttt{xfer}) to apply, \texttt{xfer\textunderscore ID}
+  \item Transformation (which we refer to as an \texttt{xfer}) to apply, \texttt{xfer\textunderscore id}
   \item Location at which to apply the transformation
 \end{itemize}
-Therefore, we define the action as 2-value tuple of (xfer\textunderscore, location). There is a special case for the xfer\textunderscore id. If this is N (i.e. 151), this is the no-op action. This will not apply any XFER to the graph, but instead end the current episode (the done value will be True and depending on the reward mechanism, the reward will be calculated).
+Therefore, we define the action as 2-value tuple of (xfer\textunderscore id, location). There is a special case for the xfer\textunderscore id. When it equals N (the number of available transformations), we consider it the NO-OP action. Therefore, in this special case we do not modify the graph, rather we terminate the current episode and reset the environment to its initial state.
 
 As explained in the previous section, we used an step-wise approach where at each iteration, we provide a 2-tuple of the transformation and location, to apply in the current state. The updated state from the environment is a 4-tuple consisting of \texttt{(graph\textunderscore tuple, xfer\textunderscore tuples, location\textunderscore masks, xfer\textunderscore mask)}.
 
