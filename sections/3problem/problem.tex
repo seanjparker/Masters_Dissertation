@@ -94,7 +94,7 @@ In this project we modelled the state and action space in accordance with prior 
 
 The environment expects two actions: 
 \begin{itemize}
-  \item Transformation (which we refer to as an \texttt{xfer}) to apply, \texttt{xfer\textunderscore id}
+  \item Transformation (which we refer to as an \texttt{xfer}) to apply
   \item Location at which to apply the transformation
 \end{itemize}
 Therefore, we define the action as 2-value tuple of (xfer\textunderscore id, location). There is a special case for the xfer\textunderscore id. When it equals N (the number of available transformations), we consider it the NO-OP action. Therefore, in this special case we do not modify the graph, rather we terminate the current episode and reset the environment to its initial state.
@@ -103,9 +103,7 @@ As explained in the previous section, we used an step-wise approach where at eac
 
 \texttt{xfer\textunderscore mask} refers to a binary mask that indicates the valid and invalid transformations that can be applied to the current computation graph as not every transformation can be applied to every graph. If the current graph has only four possible transformations that can be applied, all other transformations considered to be invalid. Thus, we return a boolean location mask where only valid transformations are set to 1, or \texttt{true}. This can be used to zero-out the model logits of invalid transformations (and thereby actions also) to make ensure the agent always selects a valid transformation from the set.
 
-Similarly, for each transformation selected by the agent, there are a number of valid locations where this transformation can be applied. We set a hardcoded, albeit configurable, limit the number of locations to 200 in this work. If the current graph has fewer than 100 possible for any given transformation, the remaining locations are considered invalid locations. Therefore, we again return a boolean location mask, which is named \texttt{location\textunderscore masks} in the 4-tuple defined above, which can be used to zero out the model logits of invalid locations.
-
-% We do this for every XFER, so this is a N x L array, where N is the number of XFERs (currently 151) and L is the maximum number of valid locations (per default 100).
+Similarly, for each transformation selected by the agent, there are a number of valid locations where this transformation can be applied. We set a hardcoded, albeit configurable, limit the number of locations to 200 in this work. If the current graph has fewer than 200 possible locations for any given transformation, the remaining are considered invalid. Therefore, we again return a boolean location mask, which is named \texttt{location\textunderscore masks} in the 4-tuple defined above, which can be used to zero out the model logits that which the locations are invalid. We use the location masks for every transformation, therefore, we have a $N \times L$ tensor, where $N$ is the number of transformations, and $L$ is the maximum number of valid locations.
 
 \subsection{Reward determination}
 \label{sec:prob:subsec:rwd}
