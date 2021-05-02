@@ -4,7 +4,10 @@ As we described in the previous section, the reinforcement learning agent must l
 
 [TODO] cite related work that used GNN for systems work?
 
-[TODO] explain how we go from ONNX graph $\rightarrow$ TASO representation that can be modified $\rightarrow$ graph\textunderscore nets GNN
+The first step prior to optimising a deep learning graph is that we must load, or create on-demand, the model in a supported deep learning framework. In our project, we can support any model that is serialised into the ONNX \cite{bai2019onnx} format which is a open-source standard for defining the structure of deep learning models. Thereby, by extension, we can support any deep learning framework that supports ONNX serialisation such as TensorFlow \cite{tensorflow2015-whitepaper}, PyTorch \cite{pytorch} and MXNet \cite{chen2015mxnet}.
 
-- Processing graph network, message passing, latent space
+Next, we parse the ONNX graph internal representation by converting all operators into the equivalent TASO tensor representations such that we can modify the graph using the environment API as we described in section \ref{sec:prob:subsec:sys-env}. Although our environment does not support conversion of all operators defined in the ONNX specification \footnote{ONNX operator specification:~\url{https://github.com/onnx/onnx/blob/master/docs/Operators.md}}, the majority of the most common operators for our use case are supported; therefore we still maintain the semantic meaning and structure of the graph. Additionally, after performing optimisations of the graph, we can export the optimised graph directly to an ONNX format.
+
+Finally, after performing the steps described above, we can apply operator transformations to the computation graphs. During training of the reinforcement learning agents, we convert the environment representation to graph neural network. In order to train the model-free and model-based agents, a latent space embedding of the computation graph is required. Therefore, we use graph neural networks and leverage the graph\textunderscore nets package in order to learn to generate a latent space embedding of the graph.
+
 - Auto-encoders
