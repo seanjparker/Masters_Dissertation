@@ -13,11 +13,11 @@ Computation graphs are a way to graphically represent both the individual tensor
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.75\columnwidth]{sections/2background/images/dataflow}
-  \caption[Single perceptron as a dataflow (computation) graph]{The operations shown in purple are the nodes of the computation graph which take an arbitraty number of inputs, performs a computation at the node and produces an output. The blue nodes represent the input nodes for tensors. The directed edges show the flow of tensors through the graph.}
+  \caption[Single perceptron as a computation graph]{The operations shown in purple are the nodes of the computation graph which take an arbitraty number of inputs, performs a computation at the node and produces an output. The blue nodes represent the input nodes for tensors. The directed edges show the flow of tensors through the graph.}
   \label{fig:bg:perceptron}
 \end{figure}
 
-Similarly, the whole model can be converted into a stateful dataflow graph in this manner. By using a stateful dataflow (or computation) graph, we can use any optimisation technique for backpropagation of the model loss though the graph [TODO rewrite last sentence]. We consider two key benefits of this representation. First, we can execute the model on any hardware device as the models have a single, uniform representation. Secondly, it allows for pre-execution optimisations based on the host device, for example, we may perform different optimisations for executing on a GPU compared to a TPU.
+Similarly, the whole model can be converted into a stateful dataflow (computation) graph in this manner. By using a computation graph, we can use any optimisation technique for backpropagation of the model loss though the graph [TODO rewrite last sentence]. We consider two key benefits of this representation. First, we can execute the model on any hardware device as the models have a single, uniform representation. Secondly, it allows for pre-execution optimisations based on the host device, for example, we may perform different optimisations for executing on a GPU compared to a TPU.
 
 \subsection{Current approaches to optimising deep learning models}
 \label{sec:bg:subsec:currentapp}
@@ -124,7 +124,7 @@ Battaglia et al. \cite{battaglia2018relational} defines a generalisable framewor
 
 \input{sections/2background/gn_algo.tex}
 
-We can define three update functions and three \textit{aggregation} function. The update functions are $\phi^e$, $\phi^v$ and $\phi^u$ for edges, vertices and globals respectively. The aggregation functions are $\rho^{e \rightarrow v} (E'_i)$, $\rho^{e \rightarrow u} (E')$, and $\rho^{v \rightarrow u} (V')$, for edges, vertices and globals respectively. To perform a single update given a set of input edges and vertices, we simply apply the three update and aggregation functions sequentially in the order of edges $\rightarrow$ vertices $\rightarrow$ globals. Algorithm \ref{algo2} describes, in general, the algorithm to perform an update of a graph block.
+We can define three update functions and three \textit{aggregation} function. The update functions are $\phi^e$, $\phi^v$ and $\phi^u$ for edges, vertices and globals respectively. The aggregation functions are $\rho^{e \rightarrow v} (E'_i)$, $\rho^{e \rightarrow u} (E')$, and $\rho^{v \rightarrow u} (V')$, for edges, vertices and globals respectively. To perform a single update given a set of input edges and vertices, we simply apply the three update and aggregation functions sequentially in the order of edges $\rightarrow$ vertices $\rightarrow$ globals. Algorithm \ref{algo:gnn} describes, in general, the algorithm to perform an update of a graph block.
 
 - Graph Auto-encoders
 
