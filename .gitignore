@@ -11,3 +11,8 @@ __latexindent_temp.tex
 .DS_Store
 *.bbl
 *.blg
+*.glg
+*.glo
+*.glsdefs
+*.ist
+*.gls
