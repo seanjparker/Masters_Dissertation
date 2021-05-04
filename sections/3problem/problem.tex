@@ -80,7 +80,7 @@ Secondly, in this work, we replicate the experiments as performed by Jia et al. 
 In the following section we will describe how to represent the computation graph optimisation problem in the reinforcement learning domain by describing the key components of the system. We describe the system environment in which the agents act, the state-action space, and finally the reward functions for both the model-free and model-based agents which we used to determine the optimal reward signal to train the agents.
 
 \subsection{System environment}
-\label{sec:prob:subsec:sys-env}
+\label{sec:prob:subsec:sysenv}
 
 In order to train a reinforcement learning agent, it necessary that we have access to an environment that, given the current environment state, the agent can take an action. After taking the chosen action, the environment is updated into a new state and the agent receives a reward signal. Typically, one uses a mature environment such as OpenAI Gym \cite{brockman2016openai} or OpenSpiel \cite{LanctotEtAl2019OpenSpiel} as the quality of the environment often has a significant effect on the stability of training. Moreover, using an environment that uses a common interface allows researchers to implement algorithms with ease and, importantly, reproduce results from published conference papers.
 
@@ -93,7 +93,7 @@ The scope of our work meant that there was no existing prior work that applied r
 \subsection{Computation Graphs}
 The first step prior to optimising a deep learning graph is that we must load, or create on-demand, the model in a supported deep learning framework. In our project, we can support any model that is serialised into the ONNX \cite{bai2019onnx} format which is a open-source standard for defining the structure of deep learning models. Thereby, by extension, we can support any deep learning framework that supports ONNX serialisation such as TensorFlow \cite{tensorflow2015-whitepaper}, PyTorch \cite{pytorch} and MXNet \cite{chen2015mxnet}.
 
-Next, we parse the ONNX graph internal representation by converting all operators into the equivalent TASO tensor representations such that we can modify the graph using the environment API as we described in section \ref{sec:prob:subsec:sys-env}. Although our environment does not support conversion of all operators defined in the ONNX specification \footnote{ONNX operator specification:~\url{https://github.com/onnx/onnx/blob/master/docs/Operators.md}}, the majority of the most common operators for our use case are supported; therefore we still maintain the semantic meaning and structure of the graph. Additionally, after performing optimisations of the graph, we can export the optimised graph directly to an ONNX format.
+Next, we parse the ONNX graph internal representation by converting all operators into the equivalent TASO tensor representations such that we can modify the graph using the environment API as we described in section \ref{sec:prob:subsec:sysenv}. Although our environment does not support conversion of all operators defined in the ONNX specification \footnote{ONNX operator specification:~\url{https://github.com/onnx/onnx/blob/master/docs/Operators.md}}, the majority of the most common operators for our use case are supported; therefore we still maintain the semantic meaning and structure of the graph. Additionally, after performing optimisations of the graph, we can export the optimised graph directly to an ONNX format.
 
 \subsection{State-Action space}
 \label{sec:prob:subsec:sap}
