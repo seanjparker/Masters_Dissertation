@@ -17,7 +17,7 @@ Computation graphs are a way to graphically represent both the individual tensor
   \label{fig:bg:perceptron}
 \end{figure}
 
-Similarly, the whole model can be converted into a stateful dataflow (computation) graph in this manner. By using a computation graph, we can use any optimisation technique for backpropagation of the model loss though the graph [TODO rewrite last sentence]. We consider two key benefits of this representation. First, we can execute the model on any hardware device as the models have a single, uniform representation. Secondly, it allows for pre-execution optimisations based on the host device, for example, we may perform different optimisations for executing on a GPU compared to a TPU.
+Similarly, the whole model can be converted into a stateful dataflow (computation) graph in this manner. Using a computation graph as an intermediate representation it provides two key benefits compared to using a raw model definition. First, we can execute the model on any hardware device as the models have a single, uniform representation that can be modified as required. Secondly, it allows for pre-execution optimisations based on the host device, for example, we may perform different optimisations for executing on a GPU compared to a TPU requires different data layouts and optimisations.
 
 \subsection{Current approaches to optimising deep learning models}
 \label{sec:bg:subsec:currentapp}
