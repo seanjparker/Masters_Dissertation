@@ -10,7 +10,7 @@ Mixture Density Networks (MDNs) are a class of network that can learn to output 
 
 
 \subsubsection{Recurrent Neural Networks}
-Recurrent Neural networks (RNNs) are a class of architectures in which the connections between the nodes form a directed graph in a temporal sequence \cite{650093}. There are many forms which an RNN can take, each providing features and levels of stability which one many find useful for the task at hand. Importantly, the output of an RNN is deterministic, however, we can use the raw outputs from the RNN as the parameters for a probabilistic model to insert a controllable level of stochasticity in the output predictions \cite{graves2014generating}.
+Recurrent Neural networks (RNNs) are a class of architectures in which the connections between the nodes form a directed graph in a temporal sequence \cite{650093}. There are many forms which an RNN can take, each providing features and levels of stability which one many find useful for the task at hand. Importantly, the output of an RNN is deterministic, however, we can use the outputs from the RNN as the parameters for a probabilistic model to insert a controllable level of stochasticity in the output predictions \cite{graves2014generating}.
 
 \begin{figure}[ht]
   \centering
@@ -19,14 +19,20 @@ Recurrent Neural networks (RNNs) are a class of architectures in which the conne
   \label{fig:rl:mdnrnn}
 \end{figure}
 
-By combining the mixture density and recurrent networks, we can use rollouts of the environment sampled using a random agent to train the combined network, called an MDN-RNN. We use the network to model $P(z_{t+1}~|~a_t, z_t, h_t)$, where $z_t$, $z_{t+1}$ is the latent state at the times $t$ and $t+1$ respectively, $a_t$ is the action taken at time $t$, and $h_t$ is the hidden state from the RNN network at time $t$. Figure \ref{fig:rl:mdnrnn} shows the combination of the RNN and MDN networks and how we calculate the predictions of the next latent state in sequence.
-
 A constraint of using RNNs is that they expect a fixed sized input sequence. However, in our work, both the shape of the latent state tensor, and the number of actions performed by the agent in a rollout is variable. As such, we employ a common approach to mitigate this problem is by prepending zero values to the input sequence until the desired length is reached, commonly referred to as padding. After performing inference on the model and retrieving the predicted state, we mask the results based on the input padding to ensure we only use valid predictions to select the next action using the controller.
 
-Furthermore, after training the world model, we must train an agent (or controller) to perform actions in the world model and learn to take optimal actions that maximise reward. During inference of the world model, we use a softmax layer which outputs $\pi$ in the form of a categorial probability distribution. We can sample the distribution under the Gaussian model parameterised by $(\mu_i, \sigma_i)$. Similar to the method of knowledge distillation, we incorporate the temperature $\tau$ into the softmax function which allows us to control the stochasticity of the agent during training of the controller.
+\subsubsection{MDN-RNN}
+
+By combining the mixture density and recurrent networks, we can use rollouts of the environment sampled using a random agent to train the combined network, called an MDN-RNN. We use the network to model $P(z_{t+1}~|~a_t, z_t, h_t)$, where $z_t$, $z_{t+1}$ is the latent state at the times $t$ and $t+1$ respectively, $a_t$ is the action taken at time $t$, and $h_t$ is the hidden state from the RNN network at time $t$. Figure \ref{fig:rl:mdnrnn} shows the combination of the RNN and MDN networks and how we calculate the predictions of the next latent state in sequence.
+
+Furthermore, after training the world model, we must train an agent (or controller) to perform actions in the world model and learn to take optimal actions that maximise reward. During inference of the world model, we use a softmax layer which outputs $\pi$ in the form of a categorial probability distribution which we sample under the Gaussian model parameterised by $(\mu_i, \sigma_i)$.
+
+In figure \ref{fig:rl:mdnrnn} we show that one of the inputs to the MDN is $\tau$, the temperature. By altering the temperature it allows us to control the stochasticity of the agent during training of the controller. The logits of the RNN that represent the predictions for the values of $\pi$ are divided by the temperature prior to being passed into the softmax function which converts the logits into pseudo-probabilities. We incorporate the temperature, $\tau$, into the softmax function using the following equation.
 
 $$
-y_i(\mathbf{x}|t) = \frac{\exp\left( \frac{z_i(\mathbf{x})}{t} \right) }{\Sigma_j \exp \left( \frac{z_j(\mathbf{x})}{t} \right) }
+\text{softmax}(\mathbf{x}_i) = \frac{\exp\left( \nicefrac{x_i}{t} \right) }{\Sigma_j \exp \left( \nicefrac{x_j}{t} \right) }
 $$
+
+Typically, temperature is a real number in the range $\tau \in \left( 0, \ldots, 1 \right)$, where a value of zero leads to completely deterministic predictions generated by the RNN, whereas larger values introduces a greater amount of stochasticity in the predictions. As larger values of $\tau$ increases the probability of samples with a lower sampling likelihood being selected it leads to a greater diversity of actions taken by the agent in the environment. Importantly, Ha et al. \cite{ha2018worldmodels} found that having a large temperature can aid in preventing the agent from finding strategies to exploit inadequacies in the world model.
 
 \subsection{Action Controller}
