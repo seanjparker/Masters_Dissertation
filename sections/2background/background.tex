@@ -132,12 +132,16 @@ We can define three update functions and three \textit{aggregation} function. Th
 
 \section{Related Work}
 
-\subsubsection{Optimisation of computation graphs}
+\textbf{Rule-based optimisation of computation graphs} is the strategy by which we transform an input graph to alter its performance characteristics. Rule-based approaches such as TensorFlow \cite{tensorflow2015-whitepaper} and TVM \cite{chen2018tvm} used a pre-defined set of transformations that are applied greedily. We evaluated our approach against these traditional approaches in section [todo: ref + extend]. In addition, recent work, such as \cite{jia2019optimizing,jia2019taso} automatically search for transformations to apply to the input graph with the modification that we allow performance decreasing transformations. Their work is similar to our approach, we use the same automated method to discover and verify the operator transformations offline, prior to optimisation of the models. We also compare our work to TASO \cite{jia2019taso} as it is most similar in terms of substitution discovery.
 
-\subsubsection{Model-based Reinforcement Learning}
+%Rule-based approaches use a set of manually defined transformations that are applied to the input computation graph based on a set of heuristics. These methods are currently used in popular deep learning frameworks such as TensorFlow \cite{tensorflow2015-whitepaper} and compilers such as TVM \cite{chen2018tvm} to optimise the models prior to execution. In addition, recent work, such as \cite{jia2019optimizing,jia2019taso} allow the application of performance decreasing transformations in search of the most optimal graph. Furthermore, Paliwal et al. \cite{paliwal2020reinforced} used deep RL genetic algorithm to reduce runtime memory usage by optimising the placement and schedule of large models. 
 
-\subsubsection{RL in Computer Systems}
+% \textbf{Compilers for computation graphs}
 
-- TASO (optimising computation graphs)
-- XLA, REGAL (deepmind)
-- World models for systems environments
+\textbf{Model-based Reinforcement Learning}
+
+\textbf{RL in Computer Systems}
+
+%- TASO (optimising computation graphs)
+%- XLA, REGAL (deepmind)
+%- World models for systems environments
