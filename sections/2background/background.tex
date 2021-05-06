@@ -6,14 +6,14 @@ This section discusses the way in which machine learning models are represented 
 
 Over the past decade, there has been a rapid development of various deep learning architectures that aim to solve a specific task. Common examples include convolutional networks (popularised by AlexNet then ResNets, etc), transformer networks that have seen use in the modelling and generation of language. Recurrent networks that have shown to excel at learning long and short trends in data.
 
-Importantly, the fundamental building blocks of the networks have largely remained unchanged.  As the networks become more complex, it becomes untenable to manually optimise the networks to reduce the execution time on hardware. Therefore, there is extensive work in ways to both automatically optimise the models, or, alternatively apply a set of hand-crafted optimisations.
+The fundamental building blocks of deep learning models have remained largely unchanged.  As the networks become more complex, it becomes tedious to manually optimise the networks to reduce the execution time on hardware. Therefore, there is extensive work in ways to both automatically optimise the models, or, alternatively apply a set of hand-crafted optimisations.
 
 Computation graphs are a way to graphically represent both the individual tensor operations in a model, and the connections (or data-flow) along the edges between nodes in the graph. Figure \ref{fig:bg:perceptron} shows how the expression, $y = \texttt{ReLU}(\mathbf{w} \cdot \mathbf{x} + b)$, can be represented graphically in a computation graph.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.75\columnwidth]{sections/2background/images/dataflow}
-  \caption[Single perceptron as a computation graph]{The operations shown in purple are the nodes of the computation graph which take an arbitraty number of inputs, performs a computation at the node and produces an output. The blue nodes represent the input nodes for tensors. The directed edges show the flow of tensors through the graph.}
+  \caption[Single perceptron as a computation graph]{The operations shown in purple are the nodes of the computation graph which take an arbitrary number of inputs, performs a computation at the node and produces an output. The blue nodes represent the input nodes for tensors. The directed edges show the flow of tensors through the graph.}
   \label{fig:bg:perceptron}
 \end{figure}
 
@@ -32,13 +32,11 @@ Alternatively, TVM \cite{chen2018tvm} and TensorRT \cite{tensorrt2017} can be us
 
 Rather than using a rule-based optimisation approach, it is possible to use more sophisticated algorithms to optimise deep learning models at the expense of computation time. Jia et al. used a cost-based backtracking search to iteratively search through the state space of possible graphs that are provably equivalent \cite{jia2019taso}. As opposed to using rule-based optimisation that applied hand-crafted optimisations, TASO generates the candidate subgraphs automatically and formally proves the transformations are equivalent using an automated theorem prover. Furthermore, Jia et al. showed that by jointly optimising both the data layout of the subgraph transformation, and the transformation itself, TASO achieves a speedup compared to performing the operations sequentially.
 
-A key benefit of using a cost-based approach is that the search can take into account far more complex interactions between the transformed kernels. For example, if we apply a series of transformations $T_1, \cdots, T_i$, the runtime may increase, and, due to the first set of transformations, we can now apply $T_{i + 1}, \cdots, T_{i + j}$, after all transformations have been applied, it is possible that we see a net decrease in runtime. By increasing the search space of transformations in this way, Jia et al. showed that it is possible to increase the runtime of deep learning models by up to 3x \cite{jia2019taso, jia2019optimizing} compared to baseline measurements.
+A key benefit of using a cost-based approach is that the search can take into account far more complex interactions between the transformed kernels. For example, if we apply a series of transformations $T_1, \cdots, T_i$, the runtime may increase, and, due to the first set of transformations, we can now apply $T_{i + 1}, \cdots, T_{j}$, after all transformations have been applied, it is possible that we see an overall decrease in runtime. By increasing the search space of transformations in this way, Jia et al. showed that it is possible to increase the runtime of deep learning models by up to 3x \cite{jia2019taso, jia2019optimizing} compared to baseline measurements using various deep learning compilers \cite{ chetlur2014cudnn, cublas2008, tensorrt2017}.
 
 
 \section{Reinforcement Learning}
 Reinforcement learning (RL) is a sub-field in machine learning, broadly, it aims to compute a control policy such that an agent can maximise its cumulative reward from the environment. It has powerful applications in environments where a model that describes the semantics of the system are not available and the agent must itself discover the optimal strategy via a reward signal.
-
-- TODO Should also mention POMDPs?
 
 Formally, RL is a class of learning problem that can be framed as a Markov decision processes (MDP) when the MDP that describes the system is not known \cite{bellman1957}; they are represented as a 5-tuple $\langle \mathcal{S}, \mathcal{A}, \mathcal{P}_a, \mathcal{R}_a, \rho_0 \rangle$ where:
 
@@ -118,19 +116,27 @@ There are a number of popular varients of LSTM cells such as peephole LSTMs, GRU
 
 \section{Graph Neural Networks}
 
-Graph neural network are a class of neural network that has seen considerable focus in recent years, with many successful applications being devised around the central idea of leveraging the structure of the graph input to aid in predicting attributes about the graph itself. The motivation factor for the use of graph networks is that, similar to the way in which convolutional neural networks revolutionised the application of neural networks to high dimensional inputs with images, video and audio - we desire an efficient way to generalise CNNs onto graphs.
+Graph neural network are a class of neural network that has seen considerable focus in recent years, with many successful applications being devised around the central idea of leveraging the structure of the graph input to aid in predicting attributes about the graph itself. The motivation factor for the use of graph networks is that, similar to the way in which convolutional neural networks revolutionised the application of neural networks to high dimensional inputs with images, video and audio---we desire an efficient way to generalise a similar idea onto graphs to take advantage of the inductive biases.
 
-Battaglia et al. \cite{battaglia2018relational} defines a generalisable framework for entity/relation based reasoning with three main operators that act on edges, nodes, and on global features using user-defined functions. Within the framework described by Battaglia et al., a graph is defined as $G = (u, V, E)$ where $u$ are the global attributes, $V = {\mathbf{v}_i}_i={1:N^v}$ is the set of vertices (with a cardinality of $N^v$) and finally, $E = {(\mathbf{e}_k, r_k, s_k)}_k={1:N^e}$ is the set of edge attributes with their sources and corresponding vertices.
+It is often difficult to model real-world problems in a way which we can train models to take advantage of the underlying structure. Much of the data generated by real-world systems and dynamics can be modelled easily in graph form; social networks, molecules, proteins, physical systems and text all exhibit a graph structure that can be leveraged. We point the reader to the survey performed by Zhou et al. \cite{zhou2020graph} for an excellent overview of the methods and applications of graph neural networks.
+
+Battaglia et al. \cite{battaglia2018relational} define a generalisable framework for entity/relation based reasoning with three main operators that act on edges, nodes, and on global features using user-defined functions. Within the framework described by Battaglia et al., a graph is defined as $G = (u, V, E)$ where $u$ are the global attributes, $V = {\mathbf{v}_i}_i={1:N^v}$ is the set of vertices (with a cardinality of $N^v$) and finally, $E = {(\mathbf{e}_k, r_k, s_k)}_k={1:N^e}$ is the set of edge attributes with their sources and corresponding vertices.
 
 \input{sections/2background/gn_algo.tex}
 
-We can define three update functions and three \textit{aggregation} function. The update functions are $\phi^e$, $\phi^v$ and $\phi^u$ for edges, vertices and globals respectively. The aggregation functions are $\rho^{e \rightarrow v} (E'_i)$, $\rho^{e \rightarrow u} (E')$, and $\rho^{v \rightarrow u} (V')$, for edges, vertices and globals respectively. To perform a single update given a set of input edges and vertices, we simply apply the three update and aggregation functions sequentially in the order of edges $\rightarrow$ vertices $\rightarrow$ globals. Algorithm \ref{algo:gnn} describes, in general, the algorithm to perform an update of a graph block.
+We can define three update functions and three \textit{aggregation} function. The update functions are $\phi^e$, $\phi^v$ and $\phi^u$ for edges, vertices and globals respectively. The aggregation functions are $\rho^{e \rightarrow v} (E'_i)$, $\rho^{e \rightarrow u} (E')$, and $\rho^{v \rightarrow u} (V')$, for edges, vertices and globals respectively. To perform a single update given a set of input edges and vertices, we simply apply the three update and aggregation functions sequentially in the order of edges, vertices, then globals. Algorithm \ref{algo:gnn} describes, in general, the algorithm to perform an update of a graph block.
 
-- Graph Auto-encoders
+% - Graph Auto-encoders
 
 % An inductive bias is a set of assumptions that allows for the algorithm to prioritise one solution over another, while being independent from the previously observed data. 
 
 \section{Related Work}
+
+\subsubsection{Optimisation of computation graphs}
+
+\subsubsection{Model-based Reinforcement Learning}
+
+\subsubsection{RL in Computer Systems}
 
 - TASO (optimising computation graphs)
 - XLA, REGAL (deepmind)
