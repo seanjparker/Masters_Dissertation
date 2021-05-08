@@ -1,6 +1,6 @@
 \chapter{Problem Specification}
 
-In this chapter we will introduce the graph optimisation problem and establish the baseline performance using cost-based backtracking optimisation. Next, we will frame the optimisation problem in the RL domain by describing the system environment, the reward calculation and the state-action space. Additionally, we describe the RL agents trained in the model-free and model-based domains and we also highlight limitations in the application of reinforcement learning to this problem.
+In this chapter we will introduce the graph optimisation problem and describe the approaches from prior work which we use as a baseline performance measure. Furthermore, we will frame the optimisation problem in the RL domain by describing the system environment, the reward calculation and the state-action space. Additionally, we describe the RL agents trained in the model-free and model-based domains and we also highlight limitations in the application of reinforcement learning to this problem.
 
 \section{Introduction}
 The major deep learning frameworks such as TensorFlow \cite{tensorflow2015-whitepaper} and PyTorch \cite{pytorch} used greedy rule-based graph transformation prior to execution. Furthermore, in Chapter \ref{sec:bg:subsec:currentapp} we described the prior work upon which this work builds. Namely, we introduced the work by Jia et al. \cite{jia2019taso,jia2019optimizing} that proposed an approach for performing an offline optimisation of deep learning computation graphs using a recursive backtracking search in the action space. Specifically, the authors developed a framework that uses a pre-generated set of formally verified, semantically equivalent graph substitutions that can be used to modify the graph to search for a reduced runtime.
@@ -63,18 +63,14 @@ An important problem in graph-level optimisation is that of defining a set of va
 
 In this work, we take the same approach as that of TASO and automatically generate the candidate graphs. We perform this as an offline step as it requires a large amount of computation to both generate and verify the candidate substitution; to place an upper bound on the computation, we limit the input tensor size to a maximum of 4x4x4x4 during the verification process. Following the generation and verification steps, we prune the collection to remove substitutions that are considered trivial and as such would not impact runtime. For example, trivial substitutions include input tensor renaming and common subgraphs, we show both techniques diagrammatically in Figure \ref{fig:problem:rewrite-graph1} and \ref{fig:problem:rewrite-graph2} respectively.
 
-- TODO: TASO algo for searching for optimal graph
+\input{sections/3problem/taso}
 
 \subsection{Baselines}
 In order to establish a baseline performance measure for performing graph-level optimisation of deep learning models we have two different sources. Firstly, we can measure the performance of a select number of deep learning models in the standard DL frameworks, TensorFlow and PyTorch. In this project, there are common, standardised mechanisms for evaluating the performance of models using these frameworks - we show the results of the baseline measurements in the following section.
 
 Secondly, in this work, we replicate the experiments as performed by Jia et al. \cite{jia2019taso} and use the results as our benchmark to compare our work against. However, for the majority of evaluated graphs we used a lower budget than that of the authors in the original paper. We found that using a lower search budget, without alteration of the hyperparameter $\alpha$, it did not result in a lower performance compared to the original experiments. Figure [TODO] shows the results of the heuristic search for the graph $\mathcal{G}^*$ and Figure [TODO] shows the relative performance of the methods on each chosen deep learning model. 
 
-% \input{sections/3problem/taso.tex}
-
-% - Estimation of runtime characteristics for each tensor op --> imperfect estimation
-
-% - Using real runtime is difficult as it takes longer to simulate and large variation in measurements between runs
+We further note that Jia et al. \cite{jia2019taso} used a simple method to estimate the runtime of tensor operators that are executed using low-level CUDA APIs and the runtime is averaged over $N$ forward passes.However, this approach to runtime estimation is imperfect as there is a non-negligible variance of the runtime on real hardware. We investigated the use of using real runtime measurements during training rather than a estimation of operator runtime. We found that it increases duration of each training step such that performance improvements are not worth the trade-off.
 
 \section{Reinforcement Learning formulation}
 In the following section we will describe how to represent the computation graph optimisation problem in the reinforcement learning domain by describing the key components of the system. We describe the system environment in which the agents act, the state-action space, and finally the reward functions for both the model-free and model-based agents which we used to determine the optimal reward signal to train the agents.
