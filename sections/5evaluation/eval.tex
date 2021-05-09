@@ -11,15 +11,18 @@ In this chapter, we look to assess aims we presented at the beginning of this wo
   \item Are the agents trained in an imagined world model applicable to the real-world environment?
 \end{enumerate}
 
+Throughout this chapter, we aim to answer these questions by a series of experiments which provide evidence to support our claims. Furthermore, we end with an overall discussion of our findings and its impact.
+
 \section{Experimental Setup}
 
 All the experiments presented in this chapter, both training various agent models and testing, is performed using the codebase available in the GitLab repository for this project [todo: link]. The project was developed, and the experiments were performed using a single machine running Ubuntu Linux 18.04 with a 6-core Intel i7-10750H@2.6GHz, 16GB RAM and an NVIDIA GeForce RTX 2070.
 
-We chose to use five real-world deep learning models to evaluate our project. InceptionV3 \cite{szegedy2015rethinking} is a common, high-accuracy model for image classification trained on the ImageNet dataset. ResNet-18 \& ResNet-50 \cite{he2015deep} are also deep convolutional networks, 18 and 50 layers deep respectively as well as SqueezeNet \cite{iandola2016squeezenet}, a shallower yet accurate model. BERT \cite{devlin2019bert} is a recent large transformer network that is used to improve Google search results \cite{nayak2019}. As these graph were also used in the evaluation of TASO \cite{jia2019taso}, we can show a direct comparison of the performance between the different approaches.
-
 To interface with the internal representation of the computation graphs, as previously discussed, we used the open-sourced version of TASO \cite{jia2019taso} which we modified to extract detailed runtime information. Further, we implemented the reinforcement learning algorithms in TensorFlow 2 \cite{tensorflow2015-whitepaper} and utilised the \texttt{graph\textunderscore nets} package developed by Battaglia et al. \cite{battaglia2018relational} to process our input graphs which we described in chapter \ref{sec:prob:subsec:sysenv}. The PPO agent was implemented based upon the implementation provided by Schulman et al. \cite{schulman2017proximal}.
 
-Finally, we would like to acknowledge the work by Kai Fricke and Michael Schaarschmidt who developed the initial Python interface with TASO, the algorithm for  converting the C++ TASO graph representation into a Cython object and performed experiments with model-free reinforcement learning agents \cite{xflowrl2019}.
+\subsection{Graphs Used}
+\label{sec:eval:subsec:graphsused}
+
+We chose to use five real-world deep learning models to evaluate our project. InceptionV3 \cite{szegedy2015rethinking} is a common, high-accuracy model for image classification trained on the ImageNet dataset. ResNet-18 \& ResNet-50 \cite{he2015deep} are also deep convolutional networks, 18 and 50 layers deep respectively as well as SqueezeNet \cite{iandola2016squeezenet}, a shallower yet accurate model. BERT \cite{devlin2019bert} is a recent large transformer network that is used to improve Google search results \cite{nayak2019}. As these graph were also used in the evaluation of TASO \cite{jia2019taso}, we can show a direct comparison of the performance between the different approaches.
 
 \section{Experiments}
 
@@ -27,17 +30,20 @@ Finally, we would like to acknowledge the work by Kai Fricke and Michael Schaars
 
 \subsection{Baselines}
 
+In this section, we will establish the baseline performance results from prior work and modern machine learning frameworks such that we can compare against our proposed approach and quantitatively analyse the results. We show the runtime metrics of the five graphs described in section \ref{sec:eval:subsec:graphsused} that are optimised using TensorFlow Grappler \cite{tensorflow2015-whitepaper}, TVM \cite{chen2018tvm}, TensorRT \cite{tensorrt2017} and TASO \cite{jia2019taso}.
+
 % Baselines (TASO, TensorFlow, TVM etc)
 
-\subsubsection{TensorFlow Grappler}
+% Inference time on graphs
+% Memory usage?
+% 
 
-\subsubsection{TASO}
+%\subsubsection{TASO}
 
 \subsection{Model-Free Agent}
 \label{sec:eval:subsec:mfagent}
 
 \subsection{Model-based Agent}
 \label{sec:eval:subsec:mbagent}
-
 
 \section{Discussion}

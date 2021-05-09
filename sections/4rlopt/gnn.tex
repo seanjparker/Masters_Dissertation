@@ -8,4 +8,4 @@ When developing the project, a pivotal part of the project is the decision as th
 
 During training of the reinforcement learning agents, we convert the internal graph representation to a graph neural network. In order to train the model-free and model-based agents, a latent space embedding of the computation graph is required. Therefore, using the \texttt{graph\textunderscore nets} package developed by Battaglia et al. \cite{battaglia2018relational}, we use the graph neural network to learn a latent space embedding of the graph using message passing networks to gather the global learned features of the graph.
 
-- Auto-encoders
+Furthermore, we acknowledge the work by Kai Fricke and Michael Schaarschmidt who developed the initial Python interface with TASO, the algorithm for converting the C++ TASO graph representation into a Cython object and performed experiments with model-free reinforcement learning agents \cite{xflowrl2019}. In this, we used their work as a base from which we continued development and research into model-free and model-based RL.
