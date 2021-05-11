@@ -7,7 +7,7 @@ In this chapter, we look to assess aims we presented at the beginning of this wo
 \begin{enumerate}
   \item Are model-based reinforcement learning methods able to model the transition dynamics of the environment?
   \item Is the agent policies able to generalise to unseen states of the same graph to act in accordance to our performance objectives?
-  \item Do they accurately model the reward estimation from the graph latent state?
+  \item Do the world models accurately model the reward estimation from the graphs latent state?
   \item Are the agents trained in an imagined world model applicable to the real-world environment?
 \end{enumerate}
 
@@ -26,17 +26,25 @@ We chose to use five real-world deep learning models to evaluate our project. In
 
 \section{Experiments}
 
-% \subsection{Hyperparameter Selection}
+\subsection{Hyperparameter Selection}
+[TODO]
 
 \subsection{Baselines}
 
-In this section, we will establish the baseline performance results from prior work and modern machine learning frameworks such that we can compare against our proposed approach and quantitatively analyse the results. We show the runtime metrics of the five graphs described in section \ref{sec:eval:subsec:graphsused} that are optimised using TensorFlow Grappler \cite{tensorflow2015-whitepaper}, TVM \cite{chen2018tvm}, TensorRT \cite{tensorrt2017} and TASO \cite{jia2019taso}.
+In this section, we will establish the baseline performance results from prior work and modern machine learning frameworks such that we can compare against our proposed approach and quantitatively analyse the results. We show the runtime metrics of the five graphs described in section \ref{sec:eval:subsec:graphsused} that are optimised using TensorFlow \cite{tensorflow2015-whitepaper}, TensorRT \cite{tensorrt2017} and TASO \cite{jia2019taso}.
 
 % Baselines (TASO, TensorFlow, TVM etc)
 
-% Inference time on graphs
-% Memory usage?
-% 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/baseline_runtimes.png}
+  \caption[Baseline runtimes of optimised graphs]{Plot}
+  \label{fig:eval:baseline-runtimes}
+\end{figure}
+
+Figure \ref{fig:eval:baseline-runtimes} shows the runtime of each optimised graph described in section \ref{sec:eval:subsec:graphsused} using the three baseline methods, TensorFlow \cite{tensorflow2015-whitepaper}, TensorRT \cite{tensorrt2017} and TASO \cite{jia2019taso}. We observe that TASO outperforms TensorFlow Grappler and TensorRT on BERT by 67.50\% and 12.98\% respectively; on the other hand, with convolutional networks, the optimised graph discovered by TASO has a runtime within $\pm 6$\% compared to TensorRT. Furthermore, we note that during our reproduction of the results found by Jia et al. \cite{jia2019taso}, we used the same value of $\alpha = 1.05$ and a search budget of 50,000 steps. We note that TASO often found the optimal graph within $\sim$5000 steps and the remaining computation steps failed to further improve the estimated runtime.
+
+[TODO] Memory usage
 
 %\subsubsection{TASO}
 
@@ -45,5 +53,38 @@ In this section, we will establish the baseline performance results from prior w
 
 \subsection{Model-based Agent}
 \label{sec:eval:subsec:mbagent}
+
+In this section we first present the results for training an agent inside a world model for each graph individually. Secondly, we compare the model-based agent performance to baseline measurements as well as showing the change in memory usage which is a by product from the applying graph transformations in order to reduce runtime. Furthermore, we also discuss the impact of hyperparameter selection on the agent performance as well as showing the accuracy of the world model in regards to graph reward prediction.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_mb.png}
+  \caption[Runtime of optimised graphs using model-based RL]{Plot}
+  \label{fig:eval:world-model-runtimes}
+\end{figure}
+
+Figure \ref{fig:eval:world-model-runtimes} shows the runtime of the optimised graphs for the model-based agents trained inside the fully hallucinogenic world model. Each agent was trained inside a world model trained using rollouts from its respective graph as described in section \ref{sec:rlopt:subsec:actionctrl}. We trained the agents for a maximum of 1000 epochs, in mini-batches of 10 epochs. Additionally, used a fixed learning rate for both the policy and value networks for training the agent.
+
+Firstly, we note that training the agents on convolutional networks, especially SqueezeNet1.1 and InceptionV3, the model-based agent failed to outperform TASO, we still decreased the runtime compared to the baseline graph produced by TensorFlow Grapper. Importantly, we observe that the model-based agent outperformed all baseline approaches on the BERT transformer network; we improved the runtime by 74\% and 7.6\% compared to TensorFlow and TASO respectively. Figure [TODO] shows the transformations applied by the model-based agent on the test graphs and compared to TASO, we only apply a single transformation over 20 times---compared to TASO which uses four distinct transformations to perform its optimisation. [TODO - describe the type of transformation applied to better compare]
+
+Compared to the strictly model-free agent---trained in the real environment---our model-based agent achieved a similar level of performance in the majority of the tested graphs. The model-free agent was trained for 2000 epochs and, by extension, over 4,000,000 interactions with the real environment. Comparatively, the model-based agent performed approximately 1,000,000 interactions with the real environment as the agent did not interact with the real environment while training inside the world model. Therefore, it is evident that the sample efficiency was improved by training inside the world model; on the other hand, the performance of the agent decreased compared to the model-free agent. In addition, stepping the world model takes, on average, 10ms whereas stepping the real environment takes on average 850ms, thus, although the performance of the model-based agent was comparatively lower, our wall-clock time for training reduced by a factor of 85x.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_training_loss.png}
+  \caption[Log-likelihood loss of world models]{Plot}
+  \label{fig:eval:world-model-loss}
+\end{figure}
+
+We also show the convergence of the world model during training in figure \ref{fig:eval:world-model-loss} which is a plot of the log-likelihood loss per training epoch for each graph. We used the same hyperparameters for training each world model. Notably, we used decayed the learning rate of the course of 2000 epochs with the TensorFlow polynomial decay policy. The MDN-RNN is trained with 8 Gaussians and 256 hidden units, all other hyperparameters used in training the MDN-RNN world model are the same as those used by Ha and Schmidhuber \cite{ha2018worldmodels}, unless otherwise stated.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_ctrl_training_reward.png}
+  \caption[Predicted epoch reward during training of agent in world model]{Plot}
+  \label{fig:eval:world-model-pred-reward}
+\end{figure}
+
+Figure \ref{fig:eval:world-model-pred-reward} shows the reward (decrease in estimated runtime) for each graph as predicted by the world model during training. 
 
 \section{Discussion}
