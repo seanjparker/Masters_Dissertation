@@ -81,10 +81,22 @@ We also show the convergence of the world model during training in figure \ref{f
 \begin{figure}[ht]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_ctrl_training_reward.png}
-  \caption[Predicted epoch reward during training of agent in world model]{Plot}
+  \caption[Predicted epoch reward during training of agent in world model]{Plot, temperature = 1}
   \label{fig:eval:world-model-pred-reward}
 \end{figure}
 
-Figure \ref{fig:eval:world-model-pred-reward} shows the reward (decrease in estimated runtime) for each graph as predicted by the world model during training. 
+Figure \ref{fig:eval:world-model-pred-reward} shows the reward (decrease in estimated runtime) for each graph as predicted by the world model during training. As the tested graphs have a wide range of epoch rewards, we perform min-max normalisation to scale the plots into the same range. We observe the same results as figure \ref{fig:eval:world-model-runtimes} in which the optimisations applied to BERT during training results in the optimal graph found after 700 epochs. On the other hand, graphs such as ResNet 18/50 are less stable during training with a high epoch to epoch variation in rewards.
+
+[TODO temperature sweep]
 
 \section{Discussion}
+
+% Model-free agent rewards + performance
+% Memory used by graphs after performing optimisation
+% Temperature sweep for MB agents
+% Hyperparameter search
+% Reward prediction for model-based method
+  % --> Separate reward pred network
+  % --> Mask pred network?
+% Heatmap plot of graph xfers
+% Show sample graph xfers graphically
