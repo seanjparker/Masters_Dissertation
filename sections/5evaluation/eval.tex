@@ -38,7 +38,7 @@ In this section, we will establish the baseline performance results from prior w
 \begin{figure}[ht]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/baseline_runtimes.png}
-  \caption[Baseline runtimes of optimised graphs]{Plot}
+  \caption[Baseline runtimes of optimised graphs]{Runtime of optimised graphs using the three baseline optimisation methods.}
   \label{fig:eval:baseline-runtimes}
 \end{figure}
 
@@ -55,8 +55,8 @@ Figure \ref{fig:eval:baseline-runtimes} shows the runtime of each optimised grap
 
 \begin{figure}[ht]
   \centering
-  %\includegraphics[width=1\columnwidth]{sections/5evaluation/images/}
-  \caption[Epoch reward for model-free agent produced by real environment]{Plot}
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_mf.png}
+  \caption[Runtimes of optimised graphs using a model-free agent]{Runtime of optimised graphs using an agent trained using the model-free PPO algorithm. We also show the baseline results as comparison.}
   \label{fig:eval:mf-agent-reward}
 \end{figure}
 
@@ -68,7 +68,7 @@ In this section we first present the results for training an agent inside a worl
 \begin{figure}[ht]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_all.png}
-  \caption[Runtime of optimised graphs using model-based RL]{Plot}
+  \caption[Runtimes of optimised graphs using a model-based controller]{Runtime of optimised graphs using an agent trained using the model-based world model. We also show the baseline results as comparison.}
   \label{fig:eval:world-model-runtimes}
 \end{figure}
 
@@ -83,7 +83,7 @@ Furthermore, an important consideration when training inside a systems environme
 \begin{figure}[ht]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_training_loss.png}
-  \caption[Log-likelihood loss of world models]{Plot}
+  \caption[Log-likelihood loss of world models]{Training plot of the log-likelihood loss for our world model on the five test graphs.}
   \label{fig:eval:world-model-loss}
 \end{figure}
 
@@ -92,7 +92,7 @@ We also show the convergence of the world model during training in figure \ref{f
 \begin{figure}[ht]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_ctrl_training_reward.png}
-  \caption[Predicted epoch reward during training of agent in world model]{Plot, temperature = 1}
+  \caption[Predicted epoch reward during training of agent in world model]{Predicted reward produced by the world model while training the agent inside a the imagined environment. All rewards are normalised into the same range.}
   \label{fig:eval:world-model-pred-reward}
 \end{figure}
 
@@ -114,20 +114,27 @@ Furthermore, we also investigated splitting the prediction components of the wor
 
 [TODO include results from separate reward prediction network]
 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/xfer_heatmap.png}
+  \caption[Heatmap of graph transformations applied by the model-based controller]{Heatmap showing the transformations applied by the trained controller acting inside the world model. Although there are over 100 possible transformations, we only show the transformations applied onto at least one graph. The counts for each transformation show the number of times it has been applied.}
+  \label{fig:eval:xfer-heatmap}
+\end{figure}
+
 \section{Discussion}
 
 TODO List:
 
-- Model-free agent rewards + performance
+- Model-free agent rewards + performance -- done
 
 - Memory used by graphs after performing optimisation
 
-- Temperature sweep for MB agents
+- Temperature sweep for MB agents -- in progress
 
 - Hyperparameter search
 
-- Reward prediction for model-based method (Separate reward pred network)
+- Reward prediction for model-based method (Separate reward pred network, compare MSE)
 
-- Heatmap plot of graph xfers
+- Heatmap plot of graph xfers -- done
 
 - Show sample graph xfers graphically
