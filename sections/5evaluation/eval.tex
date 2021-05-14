@@ -106,34 +106,38 @@ In comparison to the rewards received by the model-free agent during training, w
   \item Incorrect action mask predictions that would lead to a divergence in between the world-model state and real environment state 
 \end{itemize}
 
-In an attempt to resolve the issue highlighted above, we performed further experiments we believed would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model. A higher value of $\tau$ leads to softer targets for the agent to predict, thereby improving generalisation. Conversely, a lower value of $\tau$ presents hard targets and thus when $\tau = 1.0$, it is equivalent to using the unmodified mixing weight, $\pi$, of the MDN.   
+In an attempt to resolve the issues highlighted above, we performed further experiments which we believed would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model. Secondly, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$.
+
+Table \ref{table:eval:agent-temperatures} shows the results from performing a temperature sweep in which we used different values of $\tau$ while training the agent in a world model. After training, we evaluated the agent which produced an optimised graph that we evaluated to determine average runtime. The table shows the average reduction in runtime and standard deviation, averaged over five runs, compared to the unoptimised graph. The motivation for using a range of temperatures is that a higher value of $\tau$ leads to softer targets for the agent to predict, thereby improving generalisation. Conversely, a lower value of $\tau$ presents hard targets and thus when $\tau = 1.0$, it is equivalent to using the unmodified mixing weight, $\pi$, of the MDN.
 
 \begin{table}[]
   \centering
-  \begin{tabular}{@{}cll@{}}
+  \begin{tabular}{@{}lll@{}}
   \toprule
-  Temperature & \multicolumn{1}{c}{World-model Score} & \multicolumn{1}{c}{Real Score} \\ \midrule
-  0.1         & \multicolumn{1}{c}{}                  & \multicolumn{1}{c}{}           \\
-  0.5         & \multicolumn{1}{c}{}                  & \multicolumn{1}{c}{}           \\
-  0.75        &                                       &                                \\
-  1.0         &                                       &                                \\
-  1.2         &                                       &                                \\
-  1.5         &                                       &                                \\
-  1.75        &                                       &                                \\
-  2.0         &                                       &                                \\
-  2.5         &                                       &                                \\
-  3.0         &                                       &                                \\ \bottomrule
+  Temperature  & World-model Score        & Real Score                \\ \midrule
+  0.1          & -6.67\% $\pm$ 0.6\%          & -43.92\% $\pm$ 5.1\%         \\
+  0.5          & -7.75\% $\pm$ 0.3\%          & -55.33\% $\pm$ 6.7\%         \\
+  0.75         & -9.10\% $\pm$ 0.4\%          & -55.80\% $\pm$ 5.2\%         \\
+  1.0          & -8.85\% $\pm$ 1.2\%          & -55.78 $\pm$ 8.0\%           \\
+  1.2          & -9.91\% $\pm$ 0.8\%          & -57.01\% $\pm$ 4.8\%         \\
+  \textbf{1.5} & \textbf{-8.37\% $\mathbf{\pm}$ 0.6\%} & \textbf{-58.23\% $\mathbf{\pm}$ 5.2\%} \\
+  1.75         & -9.92\% $\pm$ 1.0\%          & -52.07\% $\pm$ 6.8\%         \\
+  2.0          & -9.65\% $\pm$ 0.8\%          & -46.12\% $\pm$ 5.9\%         \\
+  2.5          & -10.04\% $\pm$ 2.0\%         & -41.14\% $\pm$ 12.2\%         \\
+  3.0          & -10.38\% $\pm$ 1.9\%         & -51.32\% $\pm$ 7.2\%         \\ \bottomrule
   \end{tabular}
-  \end{table}
-
-Furthermore, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$.
+  \caption[Rewards using range of temperatures]{Temperature sweep of trained model-based agents}
+  \label{table:eval:agent-temperatures}
+\end{table}
 
 [TODO include results from separate reward prediction network]
 
+
+Figure \ref{fig:eval:xfer-heatmap} shows a heatmap of the various graph transformations which have been applied by a trained model-free agent during evaluation. 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/xfer_heatmap.png}
-  \caption[Heatmap of graph transformations applied by the model-based controller]{Heatmap showing the transformations applied by the trained controller acting inside the world model. Although there are over 100 possible transformations, we only show the transformations applied onto at least one graph. The counts for each transformation show the number of times it has been applied.}
+  \caption[Heatmap of graph transformations applied by MB controller]{Heatmap showing the transformations applied by the trained controller acting inside the world model. Although there are over 100 possible transformations, we only show the transformations applied onto at least one graph. The counts for each transformation show the number of times it has been applied.}
   \label{fig:eval:xfer-heatmap}
 \end{figure}
 
@@ -145,7 +149,7 @@ TODO List:
 
 - Memory used by graphs after performing optimisation
 
-- Temperature sweep for MB agents -- in progress
+- Temperature sweep for MB agents -- done
 
 - Hyperparameter search
 
