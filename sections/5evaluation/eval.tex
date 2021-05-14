@@ -108,7 +108,23 @@ In comparison to the rewards received by the model-free agent during training, w
 
 In an attempt to resolve the issue highlighted above, we performed further experiments we believed would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model. A higher value of $\tau$ leads to softer targets for the agent to predict, thereby improving generalisation. Conversely, a lower value of $\tau$ presents hard targets and thus when $\tau = 1.0$, it is equivalent to using the unmodified mixing weight, $\pi$, of the MDN.   
 
-[TODO include results from temperature sweep]
+\begin{table}[]
+  \centering
+  \begin{tabular}{@{}cll@{}}
+  \toprule
+  Temperature & \multicolumn{1}{c}{World-model Score} & \multicolumn{1}{c}{Real Score} \\ \midrule
+  0.1         & \multicolumn{1}{c}{}                  & \multicolumn{1}{c}{}           \\
+  0.5         & \multicolumn{1}{c}{}                  & \multicolumn{1}{c}{}           \\
+  0.75        &                                       &                                \\
+  1.0         &                                       &                                \\
+  1.2         &                                       &                                \\
+  1.5         &                                       &                                \\
+  1.75        &                                       &                                \\
+  2.0         &                                       &                                \\
+  2.5         &                                       &                                \\
+  3.0         &                                       &                                \\ \bottomrule
+  \end{tabular}
+  \end{table}
 
 Furthermore, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$.
 
