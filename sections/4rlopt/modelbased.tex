@@ -12,6 +12,8 @@ Mixture Density Networks (MDNs) are a class of network that can learn to output 
 
 
 \subsubsection{Recurrent Neural Networks}
+\label{sec:rlopt:subsec:rnn}
+
 Recurrent Neural networks (RNNs) are a class of architectures in which the connections between the nodes form a directed graph in a temporal sequence \cite{650093}. There are many forms which an RNN can take, each providing features and levels of stability which one many find useful for the task at hand. Importantly, the output of an RNN is deterministic, however, we can use the outputs from the RNN as the parameters for a probabilistic model to insert a controllable level of stochasticity in the output predictions \cite{graves2014generating}.
 
 \begin{figure}[ht]
@@ -51,3 +53,5 @@ In \cite{ha2018worldmodels} the authors used an evolutionally algorithm, covaria
 % We also note that compared to previous work on training controllers inside a world model, the action space in this case is far larger than prior work. For example, in the simple case of CarRacing \cite{ha2018worldmodels}, there are only two possible actions. Similarly, in Atari \cite{hafner2021mastering}, there are between 
 
 In our work, we use PPO, an on-policy algorithm which uses the world model state, rewards and terminal flags to optimise the control policy. Although any controller, from an shallow MLP to model-free RL algorithms can be used, the PPO algorithm is shown to be extremely robust to a range of parameters and for your work, a good comparison as we used the same algorithm to train the agent inside the real environment. We show the results for training the model-free and model-based controllers in sections \ref{sec:eval:subsec:mfagent} and \ref{sec:eval:subsec:mbagent} respectively.
+
+% \input{sections/4rlopt/worldmodel.tex}
