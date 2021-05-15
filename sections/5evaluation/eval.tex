@@ -35,7 +35,7 @@ In this section, we will establish the baseline performance results from prior w
 
 % Baselines (TASO, TensorFlow, TVM etc)
 
-\begin{figure}[ht]
+\begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/baseline_runtimes.png}
   \caption[Baseline runtimes of optimised graphs]{Runtime of optimised graphs using the three baseline optimisation methods.}
@@ -51,28 +51,38 @@ Figure \ref{fig:eval:baseline-runtimes} shows the runtime of each optimised grap
 \subsection{Model-Free Agent}
 \label{sec:eval:subsec:mfagent}
 
+In this section we describe our experiments performed using the model-free agent which acts inside the real environment. Firstly, we trained the agent on each graph under consideration and evaluated its optimised runtime, the results of which we present in figure \ref{fig:eval:mf-agent-runtimes}. In particular, the although the model-free agent discovers optimisations that reduce runtime, in the worst case, within 9\% of those performed by TASO.
 
-
-\begin{figure}[ht]
+\begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_mf.png}
-  \caption[Runtimes of optimised graphs using a model-free agent]{Runtime of optimised graphs using an agent trained using the model-free PPO algorithm. We also show the baseline results as comparison.}
+  \caption[Runtimes of optimised graphs using MF-RL]{Runtime of optimised graphs using an agent trained using the model-free PPO algorithm. We also show the baseline results as comparison.}
+  \label{fig:eval:mf-agent-runtimes}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mf_training_reward.png}
+  \caption{Normalised reward of }
   \label{fig:eval:mf-agent-reward}
 \end{figure}
+
 
 \subsection{Model-based Agent}
 \label{sec:eval:subsec:mbagent}
 
 In this section we first present the results for training an agent inside a world model for each graph individually. Secondly, we compare the model-based agent performance to baseline measurements as well as showing the change in memory usage which is a by product from the applying graph transformations in order to reduce runtime. Furthermore, we also discuss the impact of hyperparameter selection on the agent performance as well as showing the accuracy of the world model in regards to graph reward prediction.
 
-\begin{figure}[ht]
+\subsubsection{Runtime Performance}
+
+Figure \ref{fig:eval:world-model-runtimes} shows the runtime of the optimised graphs for the model-based agents trained inside the fully hallucinogenic world model. Each agent was trained inside a world model trained using rollouts from its respective graph as described in section \ref{sec:rlopt:subsec:actionctrl}. We trained the agents for a maximum of 1000 epochs, in mini-batches of 10 epochs. Additionally, used a fixed learning rate for both the policy and value networks for training the agent.
+
+\begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_all.png}
   \caption[Runtimes of optimised graphs using a model-based controller]{Runtime of optimised graphs using an agent trained using the model-based world model. We also show the baseline results as comparison.}
   \label{fig:eval:world-model-runtimes}
 \end{figure}
-
-Figure \ref{fig:eval:world-model-runtimes} shows the runtime of the optimised graphs for the model-based agents trained inside the fully hallucinogenic world model. Each agent was trained inside a world model trained using rollouts from its respective graph as described in section \ref{sec:rlopt:subsec:actionctrl}. We trained the agents for a maximum of 1000 epochs, in mini-batches of 10 epochs. Additionally, used a fixed learning rate for both the policy and value networks for training the agent.
 
 Firstly, we note that training the agents on convolutional networks, especially SqueezeNet1.1 and InceptionV3, the model-based agent failed to outperform TASO, we still decreased the runtime compared to the baseline graph produced by TensorFlow Grapper. Importantly, we observe that the model-based agent outperformed all baseline approaches on the BERT transformer network; we improved the runtime by 74\% and 7.6\% compared to TensorFlow and TASO respectively. Figure [TODO] shows the transformations applied by the model-based agent on the test graphs and compared to TASO, we only apply a single transformation over 20 times---compared to TASO which uses four distinct transformations to perform its optimisation. [TODO - describe the type of transformation applied to better compare]
 
@@ -80,16 +90,18 @@ Compared to the strictly model-free agent---trained in the real environment---ou
 
 Furthermore, an important consideration when training inside a systems environment is the wall-clock time for stepping the environment to a new state based upon the agent action. We analysed the time required to perform a single step while training the ResNet50 graph. We found that stepping the world model (performing inference of the MDN-RNN) takes, on average, 10ms whereas stepping the real environment takes on average 850ms. Thus, although the performance of the model-based agent was comparatively lower, our wall-clock time for required for training was reduced by a factor of 85x.
 
-\begin{figure}[ht]
+\subsubsection{World-model accuracy}
+
+\begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_training_loss.png}
   \caption[Log-likelihood loss of world models]{Training plot of the log-likelihood loss for our world model on the five test graphs.}
   \label{fig:eval:world-model-loss}
 \end{figure}
 
-We also show the convergence of the world model during training in figure \ref{fig:eval:world-model-loss} which is a plot of the log-likelihood loss per training epoch for each graph. We used the same hyperparameters for training each world model. Notably, we used decayed the learning rate of the course of 2000 epochs with the TensorFlow polynomial decay policy. The MDN-RNN is trained with 8 Gaussians and 256 hidden units, all other hyperparameters used in training the MDN-RNN world model are the same as those used by Ha and Schmidhuber \cite{ha2018worldmodels}, unless otherwise stated.
+We also show the convergence of the world model during training in figure \ref{fig:eval:world-model-loss} which is a plot of the log-likelihood loss per training epoch for each graph. We used the same hyperparameters for training each world model as well as decaying the learning rate over the course of 2000 epochs with a 2nd-degree polynomial decay policy. The MDN-RNN is trained with 8 Gaussians and 256 hidden units, all other hyperparameters used in training the MDN-RNN world model are the same as those used by Ha and Schmidhuber \cite{ha2018worldmodels}, unless otherwise stated.
 
-\begin{figure}[ht]
+\begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_ctrl_training_reward.png}
   \caption[Predicted epoch reward during training of agent in world model]{Predicted reward produced by the world model while training the agent inside a the imagined environment. All rewards are normalised into the same range.}
@@ -106,9 +118,10 @@ In comparison to the rewards received by the model-free agent during training, w
   \item Incorrect action mask predictions that would lead to a divergence in between the world-model state and real environment state 
 \end{itemize}
 
-In an attempt to resolve the issues highlighted above, we performed further experiments which we believed would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model. Secondly, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$.
+In an attempt to resolve the issues highlighted above, we performed further experiments which we believed would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model, shown in . Secondly, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$.
 
-Table \ref{table:eval:agent-temperatures} shows the results from performing a temperature sweep in which we used different values of $\tau$ while training the agent in a world model. After training, we evaluated the agent which produced an optimised graph that we evaluated to determine average runtime. The table shows the average reduction in runtime and standard deviation, averaged over five runs, compared to the unoptimised graph. The motivation for using a range of temperatures is that a higher value of $\tau$ leads to softer targets for the agent to predict, thereby improving generalisation. Conversely, a lower value of $\tau$ presents hard targets and thus when $\tau = 1.0$, it is equivalent to using the unmodified mixing weight, $\pi$, of the MDN.
+
+\subsubsection{Temperature Sweep}
 
 \begin{table}[]
   \centering
@@ -130,10 +143,14 @@ Table \ref{table:eval:agent-temperatures} shows the results from performing a te
   \label{table:eval:agent-temperatures}
 \end{table}
 
+Table \ref{table:eval:agent-temperatures} shows the results from performing a temperature sweep in which we used different values of $\tau$ while training the agent in a world model. After training, we evaluated the agent which produced an optimised graph that we evaluated to determine average runtime. The table shows the average reduction in runtime and standard deviation, averaged over five runs, compared to the unoptimised graph. The motivation for using a range of temperatures is that a higher value of $\tau$ leads to softer targets for the agent to predict, thereby improving generalisation. Conversely, a lower value of $\tau$ presents hard targets and thus when $\tau = 1.0$, it is equivalent to using the unmodified mixing weight, $\pi$, of the MDN.
+
+Based upon the results in table \ref{table:eval:agent-temperatures} from the conducted experiments, we note that the world model agents are stable to temperatures within the range of $\tau = 0.5$ to $\tau = 1.75$. Although the runtime improvement world-model from the environment is consistently above 6\%, we observe a large difference between the predicted runtime improvement and the real environment reward. Despite the experiments performed in [TODO] which show a low MSE between the predicted and real scores, during evaluation we see a large divergence between the two scores. Therefore, we performed further experiments to evaluate the performance of the agents inside the world-model using a composite model in which the reward prediction is conducted in a separately trained network.
+
 [TODO include results from separate reward prediction network]
 
+\subsubsection{Graph transformations}
 
-Figure \ref{fig:eval:xfer-heatmap} shows a heatmap of the various graph transformations which have been applied by a trained model-free agent during evaluation. 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/xfer_heatmap.png}
@@ -141,20 +158,16 @@ Figure \ref{fig:eval:xfer-heatmap} shows a heatmap of the various graph transfor
   \label{fig:eval:xfer-heatmap}
 \end{figure}
 
+Figure \ref{fig:eval:xfer-heatmap} shows a heatmap of the various graph transformations which have been applied by a trained model-free agent during evaluation. Notably, the optimisations applied to the ResNet18/50 graphs apply similar transformations, those targeting the convolutions in the network; as the networks are composed of alike convolutional operators, with different depths, we apply analogous transformations. On the otherhand, for recurrent networks such as BERT, we only apply relatively few transformations. This is in stark contrast to the series of transformations found by TASO which we apply four substitutions rather than the two applied by our work. Despite the large disparity in both the specific transformations as well as number of times we applied transformations, the performance difference between TASO and our proposed work is small.
+
 \section{Discussion}
 
 TODO List:
 
-- Model-free agent rewards + performance -- done
-
 - Memory used by graphs after performing optimisation
-
-- Temperature sweep for MB agents -- done
 
 - Hyperparameter search
 
 - Reward prediction for model-based method (Separate reward pred network, compare MSE)
-
-- Heatmap plot of graph xfers -- done
 
 - Show sample graph xfers graphically
