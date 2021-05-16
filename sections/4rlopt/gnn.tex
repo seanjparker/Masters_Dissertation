@@ -4,7 +4,7 @@ As we described in the previous section, the reinforcement learning agent must l
 
 When developing the project, a pivotal part of the project is the decision as the representation of the GNN as there are a wide variety of forms which it can take. For example, a common implementation are message-passing networks (MPNNs) \cite{gilmer2017neural} which reduce data along edges and between nodes in the graph. Alternatively, we considered using graph convolutional networks (GCNs) \cite{kipf2016semi}, however, we found that using messages passing networks produced a more generalisable embedding as we leverage the relational biases in the graph structure and avoid imposing restrictions on the learned embedding accidentally.
 
-[TODO] cite related work that used GNN for systems work?
+[TODO] cite related work that used GNNs in Computer Systems
 
 During training of the reinforcement learning agents, we convert the internal graph representation to a graph neural network. In order to train the model-free and model-based agents, a latent space embedding of the computation graph is required. Therefore, using the \texttt{graph\textunderscore nets} package developed by Battaglia et al. \cite{battaglia2018relational}, we use the graph neural network to learn a latent space embedding of the graph using message passing networks to gather the global learned features of the graph.
 

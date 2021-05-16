@@ -30,6 +30,7 @@ We chose to use five real-world deep learning models to evaluate our project. In
 [TODO]
 
 \subsection{Baselines}
+\label{sec:eval:subsec:baseline}
 
 In this section, we will establish the baseline performance results from prior work and modern machine learning frameworks such that we can compare against our proposed approach and quantitatively analyse the results. We show the runtime metrics of the five graphs described in section \ref{sec:eval:subsec:graphsused} that are optimised using TensorFlow \cite{tensorflow2015-whitepaper}, TensorRT \cite{tensorrt2017} and TASO \cite{jia2019taso}.
 
@@ -60,13 +61,17 @@ In this section we describe our experiments performed using the model-free agent
   \label{fig:eval:mf-agent-runtimes}
 \end{figure}
 
+
+Figure \ref{fig:eval:mf-agent-reward} shows the reward produced by the model-free agent acting inside the real environment for each graph. Due to the difference in estimated runtime between graphs, we used min-max normalisation to scale the rewards into the same range. First and foremost, it is evident that the graph optimisation using the model-free agent reward converge quickly after only $\sim$1000 epochs with low variation in the average epoch rewards after convergence.
+
 \begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mf_training_reward.png}
-  \caption{Normalised reward of }
+  \caption[Epoch reward during training of model-free agent]{Normalised reward of model-free agent produced by the real environment in response to selected actions by the agent}
   \label{fig:eval:mf-agent-reward}
 \end{figure}
 
+[TODO include results from experiments with reward functions]
 
 \subsection{Model-based Agent}
 \label{sec:eval:subsec:mbagent}
@@ -84,13 +89,14 @@ Figure \ref{fig:eval:world-model-runtimes} shows the runtime of the optimised gr
   \label{fig:eval:world-model-runtimes}
 \end{figure}
 
-Firstly, we note that training the agents on convolutional networks, especially SqueezeNet1.1 and InceptionV3, the model-based agent failed to outperform TASO, we still decreased the runtime compared to the baseline graph produced by TensorFlow Grapper. Importantly, we observe that the model-based agent outperformed all baseline approaches on the BERT transformer network; we improved the runtime by 74\% and 7.6\% compared to TensorFlow and TASO respectively. Figure [TODO] shows the transformations applied by the model-based agent on the test graphs and compared to TASO, we only apply a single transformation over 20 times---compared to TASO which uses four distinct transformations to perform its optimisation. [TODO - describe the type of transformation applied to better compare]
+Firstly, we note that training the agents on convolutional networks, especially SqueezeNet1.1 and InceptionV3, the model-based agent failed to outperform TASO, we still decreased the runtime compared to the baseline graph produced by TensorFlow Grapper. Importantly, we observe that the model-based agent outperformed all baseline approaches on the BERT transformer network; we improved the runtime by 74\% and 7.6\% compared to TensorFlow and TASO respectively. Figure \ref{fig:eval:xfer-heatmap} shows the transformations applied by the model-based agent on the test graphs and compared to TASO, we only apply a single transformation over 20 times---compared to TASO which uses four distinct transformations to perform its optimisation. [TODO - describe the type of transformations applied to better compare]
 
-Compared to the strictly model-free agent---trained in the real environment---our model-based agent achieved a similar level of performance in the majority of the tested graphs. The model-free agent was trained for 2000 epochs and, by extension, over 4,000,000 interactions with the real environment. Comparatively, the model-based agent performed approximately 1,000,000 interactions with the real environment as the agent did not interact with the real environment while training inside the world model. Therefore, it is evident that the sample efficiency was improved by training inside the world model; on the other hand, the performance of the agent decreased compared to the model-free agent.
+Compared to the strictly model-free agent that was trained in the real environment, our model-based agent achieved a similar level of performance in the majority of the tested graphs. The model-free agent was trained for 2000 epochs and, by extension, over 4,000,000 interactions with the real environment. Comparatively, the model-based agent performed approximately 1,000,000 interactions with the real environment as the agent did not interact with the real environment while training inside the world model. Therefore, it is evident that the sample efficiency was improved by training inside the world model; on the other hand, the performance of the agent decreased compared to the model-free agent.
 
 Furthermore, an important consideration when training inside a systems environment is the wall-clock time for stepping the environment to a new state based upon the agent action. We analysed the time required to perform a single step while training the ResNet50 graph. We found that stepping the world model (performing inference of the MDN-RNN) takes, on average, 10ms whereas stepping the real environment takes on average 850ms. Thus, although the performance of the model-based agent was comparatively lower, our wall-clock time for required for training was reduced by a factor of 85x.
 
 \subsubsection{World-model accuracy}
+\label{sec:eval:subsubsec:wm-acc}
 
 \begin{figure}[h]
   \centering
@@ -110,7 +116,7 @@ We also show the convergence of the world model during training in figure \ref{f
 
 Figure \ref{fig:eval:world-model-pred-reward} shows the reward (decrease in estimated runtime) for each graph as predicted by the world model during training. As the tested graphs have a wide range of epoch rewards, we perform min-max normalisation to scale the plots into the same range. We observe the same results as figure \ref{fig:eval:world-model-runtimes} in which the optimisations applied to BERT during training results in the optimal graph found after 700 epochs. On the other hand, graphs such as ResNet 18/50 are less stable during training with a high epoch to epoch variation in rewards.
 
-In comparison to the rewards received by the model-free agent during training, we note that the strictly model-free agent was more stable during training, and additionally, consistently found the optimised graph after approximately 1000 epochs. Although if we assume that both the model-free and model-based agents should achieve a similar level in performance once trained, the results in figure \ref{fig:eval:world-model-pred-reward} and [TODO] show that the agents trained in the world model are less stable with a higher reward variance. We hypothesise that there are three factors for such a discrepancy to exist:
+In comparison to the rewards received by the model-free agent during training, we note that the strictly model-free agent was more stable during training, and additionally, consistently found the optimised graph after approximately 1000 epochs. Although if we assume that both the model-free and model-based agents should achieve a similar level in performance once trained, the results in figure \ref{fig:eval:world-model-pred-reward} and \ref{fig:eval:mf-agent-reward} show that the agents trained in the world model are less stable with a higher reward variance. We hypothesise that there are three factors for such a discrepancy to occur:
 
 \begin{itemize}
   \item Imperfect world-model reward predictions leading to incorrect (or invalid) actions being performed
@@ -139,13 +145,13 @@ In an attempt to resolve the issues highlighted above, we performed further expe
   2.5          & -10.04\% $\pm$ 2.0\%         & -41.14\% $\pm$ 12.2\%         \\
   3.0          & -10.38\% $\pm$ 1.9\%         & -51.32\% $\pm$ 7.2\%         \\ \bottomrule
   \end{tabular}
-  \caption[Rewards using range of temperatures]{Temperature sweep of trained model-based agents}
+  \caption[Rewards using range of temperatures]{Temperature sweep of trained model-based agent optimising the BERT network.}
   \label{table:eval:agent-temperatures}
 \end{table}
 
 Table \ref{table:eval:agent-temperatures} shows the results from performing a temperature sweep in which we used different values of $\tau$ while training the agent in a world model. After training, we evaluated the agent which produced an optimised graph that we evaluated to determine average runtime. The table shows the average reduction in runtime and standard deviation, averaged over five runs, compared to the unoptimised graph. The motivation for using a range of temperatures is that a higher value of $\tau$ leads to softer targets for the agent to predict, thereby improving generalisation. Conversely, a lower value of $\tau$ presents hard targets and thus when $\tau = 1.0$, it is equivalent to using the unmodified mixing weight, $\pi$, of the MDN.
 
-Based upon the results in table \ref{table:eval:agent-temperatures} from the conducted experiments, we note that the world model agents are stable to temperatures within the range of $\tau = 0.5$ to $\tau = 1.75$. Although the runtime improvement world-model from the environment is consistently above 6\%, we observe a large difference between the predicted runtime improvement and the real environment reward. Despite the experiments performed in [TODO] which show a low MSE between the predicted and real scores, during evaluation we see a large divergence between the two scores. Therefore, we performed further experiments to evaluate the performance of the agents inside the world-model using a composite model in which the reward prediction is conducted in a separately trained network.
+Based upon the results in table \ref{table:eval:agent-temperatures} from the conducted experiments, we note that the world model agents are stable to temperatures within the range of $\tau = 0.5$ to $\tau = 1.75$. Although the runtime improvement world-model from the environment is consistently above 6\%, we observe a large difference between the predicted runtime improvement and the real environment reward. Despite the experiments performed in section \ref{sec:eval:subsubsec:wm-acc} which shows a low MSE between the predicted and real scores, during evaluation we see a large divergence between the two scores. Therefore, we performed further experiments to evaluate the performance of the agents inside the world-model using a composite model in which the reward prediction is conducted in a separately trained network.
 
 [TODO include results from separate reward prediction network]
 
@@ -158,9 +164,11 @@ Based upon the results in table \ref{table:eval:agent-temperatures} from the con
   \label{fig:eval:xfer-heatmap}
 \end{figure}
 
-Figure \ref{fig:eval:xfer-heatmap} shows a heatmap of the various graph transformations which have been applied by a trained model-free agent during evaluation. Notably, the optimisations applied to the ResNet18/50 graphs apply similar transformations, those targeting the convolutions in the network; as the networks are composed of alike convolutional operators, with different depths, we apply analogous transformations. On the otherhand, for recurrent networks such as BERT, we only apply relatively few transformations. This is in stark contrast to the series of transformations found by TASO which we apply four substitutions rather than the two applied by our work. Despite the large disparity in both the specific transformations as well as number of times we applied transformations, the performance difference between TASO and our proposed work is small.
+Figure \ref{fig:eval:xfer-heatmap} shows a heatmap of the various graph transformations which have been applied by a trained model-free agent during evaluation. Notably, the optimisations applied to the ResNet18/50 graphs apply similar transformations, those targeting the convolutions in the network; as the networks are composed of alike convolutional operators, with different depths, we apply analogous transformations. On the otherhand, for recurrent networks such as BERT, we only apply relatively few transformations. This is in stark contrast to the series of transformations found by TASO which we apply four substitutions rather than the two applied by our work. Despite the large disparity in both the specific transformations as well as number of times we applied transformations, the performance difference between TASO and our proposed work is surprisingly low.
 
 \section{Discussion}
+[TODO]
+
 
 TODO List:
 
