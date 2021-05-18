@@ -32,9 +32,9 @@ Alternatively, TVM \cite{chen2018tvm} and TensorRT \cite{tensorrt2017} can be us
 
 %TODO - either expand or remove
 
-Rather than using a rule-based optimisation approach, it is possible to use more sophisticated algorithms to optimise deep learning models at the expense of computation time. Jia et al. used a cost-based backtracking search to iteratively search through the state space of possible graphs that are provably equivalent \cite{jia2019taso}. As opposed to using rule-based optimisation that applied hand-crafted optimisations, TASO generates the candidate subgraphs automatically and formally proves the transformations are equivalent using an automated theorem prover. Furthermore, Jia et al. showed that by jointly optimising both the data layout of the subgraph transformation, and the transformation itself, TASO achieves a speedup compared to performing the operations sequentially.
+Rather than using a rule-based optimisation approach, it is possible to use more sophisticated algorithms to optimise deep learning models at the expense of computation time. \citet{jia2019taso} developed TASO that used a cost-based backtracking search to iteratively search through the state space of possible graphs that are formally equivalent. In contrast to using rule-based optimisation that applied hand-crafted optimisations heuristically, TASO generates the candidate subgraphs automatically and formally proves the transformations are equivalent using an automated theorem prover. Furthermore, TASO showed that by jointly optimising both the data layout of the subgraph transformation and the transformation itself, it achieves a further improvement compared to performing the two operations sequentially.
 
-A key benefit of using a cost-based approach is that the search can take into account far more complex interactions between the transformed kernels. For example, if we apply a series of transformations $T_1, \cdots, T_i$, the runtime may increase, and, due to the first set of transformations, we can now apply $T_{i + 1}, \cdots, T_{j}$, after all transformations have been applied, it is possible that we see an overall decrease in runtime. By increasing the search space of transformations in this way, Jia et al. showed that it is possible to increase the runtime of deep learning models by up to 3x \cite{jia2019taso, jia2019optimizing} compared to baseline measurements using various deep learning compilers \cite{ chetlur2014cudnn, cublas2008, tensorrt2017}.
+A key benefit of using a cost-based approach is that the search can take into account far more complex interactions between the transformed kernels. For example, if we apply a series of transformations $T_1, \cdots, T_i$, the runtime may increase, and, due to the first set of transformations, we can now apply $T_{i + 1}, \cdots, T_{j}$, after all transformations have been applied, it is possible that we see an overall decrease in runtime. By increasing the search space of transformations in this way, TASO showed that it is possible to increase the runtime of deep learning models by up to 3x \cite{jia2019taso, jia2019optimizing}, compared to baseline measurements using various deep learning compilers \cite{ chetlur2014cudnn, cublas2008, tensorrt2017}.
 
 
 \section{Reinforcement Learning}
@@ -79,7 +79,7 @@ World models, first introduced by Ha and Schmidhuber \cite{ha2018worldmodels}, m
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.75\columnwidth]{sections/2background/images/mb-rl.png}
+  \includegraphics[width=0.75\columnwidth]{sections/2background/images/mb-rl}
   \caption[Model-based Reinforcement Learning End-To-End System]{Diagrammatic representation of a world-model made up from an encoder (V) that transforms the input into latent space, a `memory' module, M, that learns the behaviour of the environment from the latent vector $z$ and a controller, C, that is trained using the latent vector of the encoder and the output features from the memory to choose an action which is either applied to the real or imagined environment. Figure adapted from \cite{ha2018worldmodels}.}
   \label{fig:bg:mb-rl}
 \end{figure}
