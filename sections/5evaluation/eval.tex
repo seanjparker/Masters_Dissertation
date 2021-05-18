@@ -11,7 +11,7 @@ In this chapter, we look to assess aims we presented at the beginning of this wo
   \item Are the agents trained in an imagined world model applicable to the real-world environment?
 \end{enumerate}
 
-Throughout this chapter, we aim to answer these questions by a series of experiments which provide evidence to support our claims. Furthermore, we end with an overall discussion of our findings and its impact.
+Throughout this chapter, we aim to answer these questions by a series of experiments which provide evidence to support our claims. Finally, we conclude with an overall discussion of our findings and its impact.
 
 \section{Experimental Setup}
 
@@ -22,7 +22,7 @@ To interface with the internal representation of the computation graphs, as prev
 \subsection{Graphs Used}
 \label{sec:eval:subsec:graphsused}
 
-We chose to use five real-world deep learning models to evaluate our project. InceptionV3 \cite{szegedy2015rethinking} is a common, high-accuracy model for image classification trained on the ImageNet dataset. ResNet-18 \& ResNet-50 \cite{he2015deep} are also deep convolutional networks, 18 and 50 layers deep respectively as well as SqueezeNet \cite{iandola2016squeezenet}, a shallower yet accurate model. BERT \cite{devlin2019bert} is a recent large transformer network that is used to improve Google search results \cite{nayak2019}. As these graph were also used in the evaluation of TASO \cite{jia2019taso}, we can show a direct comparison of the performance between the different approaches.
+We chose to use five real-world deep learning models to evaluate our project. InceptionV3 \cite{szegedy2015rethinking} is a common, high-accuracy model for image classification trained on the ImageNet dataset \footnote{\url{https://image-net.org/index.php}}. ResNet-18 \& ResNet-50 \cite{he2015deep} are also deep convolutional networks, 18 and 50 layers deep respectively as well as SqueezeNet \cite{iandola2016squeezenet}, a shallower yet accurate model. BERT \cite{devlin2019bert} is a recent large transformer network that has been to improve Google search results \cite{nayak2019}. As these graph were also used in the evaluation of TASO \cite{jia2019taso}, we can show a direct comparison of the performance between the different approaches.
 
 \section{Experiments}
 
@@ -38,25 +38,23 @@ In this section, we will establish the baseline performance results from prior w
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/baseline_runtimes.png}
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/baseline_runtimes}
   \caption[Baseline runtimes of optimised graphs]{Runtime of optimised graphs using the three baseline optimisation methods.}
   \label{fig:eval:baseline-runtimes}
 \end{figure}
 
-Figure \ref{fig:eval:baseline-runtimes} shows the runtime of each optimised graph described in section \ref{sec:eval:subsec:graphsused} using the three baseline methods, TensorFlow \cite{tensorflow2015-whitepaper}, TensorRT \cite{tensorrt2017} and TASO \cite{jia2019taso}. We observe that TASO outperforms TensorFlow Grappler and TensorRT on BERT by 67.50\% and 12.98\% respectively; on the other hand, with convolutional networks, the optimised graph discovered by TASO has a runtime within $\pm 6$\% compared to TensorRT. Furthermore, we note that during our reproduction of the results found by Jia et al. \cite{jia2019taso}, we used the same value of $\alpha = 1.05$ and a search budget of 50,000 steps. We note that TASO often found the optimal graph within $\sim$5000 steps and the remaining computation steps failed to further improve the estimated runtime.
-
-[TODO] Memory usage
+Figure \ref{fig:eval:baseline-runtimes} shows the runtime of each optimised graph described in section \ref{sec:eval:subsec:graphsused} using the three baseline methods, TensorFlow \cite{tensorflow2015-whitepaper}, TensorRT \cite{tensorrt2017} and TASO \cite{jia2019taso}. We observe that TASO outperforms TensorFlow Grappler and TensorRT on BERT by 50.5\% and 43.6\% respectively. On the other hand, with convolutional networks, the optimised graph discovered by TASO has a runtime within $\pm 6$\% compared to TensorRT. Furthermore, we note that during our reproduction of the results found by Jia et al. \cite{jia2019taso}, we used the same value of $\alpha = 1.05$ and a search budget of 50,000 steps. TASO often found the optimal graph within $\sim$5000 steps and the remaining computation steps failed to further improve the estimated runtime.
 
 %\subsubsection{TASO}
 
 \subsection{Model-Free Agent}
 \label{sec:eval:subsec:mfagent}
 
-In this section we describe our experiments performed using the model-free agent which acts inside the real environment. Firstly, we trained the agent on each graph under consideration and evaluated its optimised runtime, the results of which we present in figure \ref{fig:eval:mf-agent-runtimes}. In particular, the although the model-free agent discovers optimisations that reduce runtime, in the worst case, within 9\% of those performed by TASO.
+In this section we describe our experiments performed using the model-free agent which acts inside the real environment. Firstly, we trained the agent on each graph under consideration and evaluated its optimised runtime, the results of which we present in figure \ref{fig:eval:mf-agent-runtimes}. In the worst case, the model-free agent performs a series of optimisations that increases runtime by 9\% compared to those discovered by TASO.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_mf.png}
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_mf}
   \caption[Runtimes of optimised graphs using MF-RL]{Runtime of optimised graphs using an agent trained using the model-free PPO algorithm. We also show the baseline results as comparison.}
   \label{fig:eval:mf-agent-runtimes}
 \end{figure}
@@ -66,7 +64,7 @@ Figure \ref{fig:eval:mf-agent-reward} shows the reward produced by the model-fre
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mf_training_reward.png}
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mf_training_reward}
   \caption[Epoch reward during training of model-free agent]{Normalised reward of model-free agent produced by the real environment in response to selected actions by the agent}
   \label{fig:eval:mf-agent-reward}
 \end{figure}
@@ -80,36 +78,59 @@ In this section we first present the results for training an agent inside a worl
 
 \subsubsection{Runtime Performance}
 
-Figure \ref{fig:eval:world-model-runtimes} shows the runtime of the optimised graphs for the model-based agents trained inside the fully hallucinogenic world model. Each agent was trained inside a world model trained using rollouts from its respective graph as described in section \ref{sec:rlopt:subsec:actionctrl}. We trained the agents for a maximum of 1000 epochs, in mini-batches of 10 epochs. Additionally, used a fixed learning rate for both the policy and value networks for training the agent.
+Figure \ref{fig:eval:world-model-runtimes} shows the runtime of the optimised graphs for the model-based agents trained inside the fully hallucinogenic world model. Each agent was trained inside a world model using rollouts from its respective graph as described in section \ref{sec:rlopt:subsec:actionctrl}. We trained the agents for a maximum of 1000 epochs, in mini-batches of 10 epochs. Additionally, we used a fixed learning rate for both the policy and value networks during training of the controller agent network.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_all.png}
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_all}
   \caption[Runtimes of optimised graphs using a model-based controller]{Runtime of optimised graphs using an agent trained using the model-based world model. We also show the baseline results as comparison.}
   \label{fig:eval:world-model-runtimes}
 \end{figure}
 
-Firstly, we note that training the agents on convolutional networks, especially SqueezeNet1.1 and InceptionV3, the model-based agent failed to outperform TASO, we still decreased the runtime compared to the baseline graph produced by TensorFlow Grapper. Importantly, we observe that the model-based agent outperformed all baseline approaches on the BERT transformer network; we improved the runtime by 74\% and 7.6\% compared to TensorFlow and TASO respectively. Figure \ref{fig:eval:xfer-heatmap} shows the transformations applied by the model-based agent on the test graphs and compared to TASO, we only apply a single transformation over 20 times---compared to TASO which uses four distinct transformations to perform its optimisation. [TODO - describe the type of transformations applied to better compare]
+Firstly, we note that training the agents on convolutional networks, especially SqueezeNet1.1 and InceptionV3, the model-based agent failed to outperform TASO, we still decreased the runtime compared to the baseline graph produced by TensorFlow Grapper. Importantly, we observe that the model-based agent outperformed all baseline approaches on the BERT transformer network; we improved the runtime by 54.1\% and 7.3\% compared to TensorFlow and TASO respectively. Figure \ref{fig:eval:xfer-heatmap} shows the transformations applied by the model-based agent on the test graphs and compared to TASO, we only apply a single transformation over 20 times---compared to TASO which uses four distinct transformations produce the optimised graph. [TODO - describe the type of transformations applied to better compare]
 
-Compared to the strictly model-free agent that was trained in the real environment, our model-based agent achieved a similar level of performance in the majority of the tested graphs. The model-free agent was trained for 2000 epochs and, by extension, over 4,000,000 interactions with the real environment. Comparatively, the model-based agent performed approximately 1,000,000 interactions with the real environment as the agent did not interact with the real environment while training inside the world model. Therefore, it is evident that the sample efficiency was improved by training inside the world model; on the other hand, the performance of the agent decreased compared to the model-free agent.
+Compared to the strictly model-free agent that was trained in the real environment, our model-based agent achieved a similar level of performance in the majority of the tested graphs. The model-free agent was trained for 2000 epochs and, by extension, over 4,000,000 interactions with the real environment. Comparatively, the model-based agent performed approximately 1,000,000 interactions with the real environment as the agent did not interact with the real environment while training inside the world model. Therefore, it is evident that by training inside the world model we improved the sample efficiency of the agent. On the other hand, the performance of the agent decreased compared to the model-free agent in four of the five tested graphs.
 
-Furthermore, an important consideration when training inside a systems environment is the wall-clock time for stepping the environment to a new state based upon the agent action. We analysed the time required to perform a single step while training the ResNet50 graph. We found that stepping the world model (performing inference of the MDN-RNN) takes, on average, 10ms whereas stepping the real environment takes on average 850ms. Thus, although the performance of the model-based agent was comparatively lower, our wall-clock time for required for training was reduced by a factor of 85x.
+Furthermore, an important consideration when training inside a systems environment is the wall-clock time for stepping the environment to a new state based upon the agent action. We analysed the time required to perform a single step while training the ResNet50 graph. We found that stepping the world model (performing inference of the world-model) takes, on average, 10ms whereas stepping the real environment takes on average 850ms. Thus, although the performance of the model-based agent was comparatively lower, our wall-clock time for required for training was reduced by a factor of 85x.
+
+\subsubsection{Memory Usage}
+blah blah blah blahblah blah blah blahblah blah
+% Table of memory usage
+\begin{table}[htbp]
+  \centering
+  \resizebox{\columnwidth}{!}{
+    \begin{tabular}{@{}ccccc@{}}
+      \toprule
+      \multicolumn{1}{l}{} & \multicolumn{2}{c}{Baseline (TF)}                                         & \multicolumn{2}{c}{Optimised (MB-RL)} \\ \midrule
+      \multicolumn{1}{l}{} & \multicolumn{1}{l}{Inf. time (ms)} & \multicolumn{1}{l}{Mem. usage (GiB)} & \multicolumn{2}{c}{\% Improvement}    \\
+      ResNet18      & 12.2 & 1.18 & 3.0\%  &  \\
+      ResNet50      & 26.7 & 2.34 & 1.0\%  &  \\
+      InceptionV3   & 17.6 & 2.11 & 12.5\% &  \\
+      SqueezeNet1.1 & 4.6  & 1.14 & 18.9\% &  \\
+      BERT          & 4.1  & 0.26 & 54.1\% &  \\ \bottomrule
+      \end{tabular}
+  }
+  \caption[Memory usage of optimised graphs]{Relative performance improvement of the graphs optimised by the model-based agent. We show the inference time, and memory used for performing inference on the model.}
+  \label{table:eval:graph-mem-usage}
+  \end{table}
 
 \subsubsection{World-model accuracy}
 \label{sec:eval:subsubsec:wm-acc}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_training_loss.png}
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_training_loss}
   \caption[Log-likelihood loss of world models]{Training plot of the log-likelihood loss for our world model on the five test graphs.}
   \label{fig:eval:world-model-loss}
 \end{figure}
 
-We also show the convergence of the world model during training in figure \ref{fig:eval:world-model-loss} which is a plot of the log-likelihood loss per training epoch for each graph. We used the same hyperparameters for training each world model as well as decaying the learning rate over the course of 2000 epochs with a 2nd-degree polynomial decay policy. The MDN-RNN is trained with 8 Gaussians and 256 hidden units, all other hyperparameters used in training the MDN-RNN world model are the same as those used by Ha and Schmidhuber \cite{ha2018worldmodels}, unless otherwise stated.
+The training of the model-based agent is split into two parts. First, we train the world-model, the network that learn to simulate the environment dynamics, and secondly, we train the controller network inside the world-model. In this section, we show the convergence of the world model during training in figure \ref{fig:eval:world-model-loss}. The figure is a plot of the log-likelihood loss per training epoch for each graph. We used the same hyperparameters for training each world model as well as decaying the learning rate over the course of 2000 epochs with a 2nd-degree polynomial decay policy. The MDN-RNN is trained with 8 Gaussians and 256 hidden units, all other hyperparameters used in training the MDN-RNN world model are the same as those used by Ha and Schmidhuber \cite{ha2018worldmodels}, unless otherwise stated.
+
+TODO explain more!
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_ctrl_training_reward.png}
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mb_ctrl_training_reward}
   \caption[Predicted epoch reward during training of agent in world model]{Predicted reward produced by the world model while training the agent inside a the imagined environment. All rewards are normalised into the same range.}
   \label{fig:eval:world-model-pred-reward}
 \end{figure}
@@ -124,12 +145,13 @@ In comparison to the rewards received by the model-free agent during training, w
   \item Incorrect action mask predictions that would lead to a divergence in between the world-model state and real environment state 
 \end{itemize}
 
-In an attempt to resolve the issues highlighted above, we performed further experiments which we believed would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model, shown in . Secondly, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$.
+In an attempt to resolve the issues highlighted above, we performed further experiments which we believe would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model, shown in section \ref{sec:eval:subsec:temp-sweep}. Secondly, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate network to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$.
 
 
 \subsubsection{Temperature Sweep}
+\label{sec:eval:subsec:temp-sweep}
 
-\begin{table}[]
+\begin{table}[htbp]
   \centering
   \begin{tabular}{@{}lll@{}}
   \toprule
@@ -159,7 +181,7 @@ Based upon the results in table \ref{table:eval:agent-temperatures} from the con
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/xfer_heatmap.png}
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/xfer_heatmap}
   \caption[Heatmap of graph transformations applied by MB controller]{Heatmap showing the transformations applied by the trained controller acting inside the world model. Although there are over 100 possible transformations, we only show the transformations applied onto at least one graph. The counts for each transformation show the number of times it has been applied.}
   \label{fig:eval:xfer-heatmap}
 \end{figure}
