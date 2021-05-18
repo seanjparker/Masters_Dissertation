@@ -3,7 +3,7 @@
 In this chapter we will introduce the graph optimisation problem and describe the approaches from prior work which we use as a baseline performance measure. Furthermore, we will frame the optimisation problem in the RL domain by describing the system environment, the reward calculation and the state-action space. Additionally, we describe the RL agents trained in the model-free and model-based domains and we also highlight limitations in the application of reinforcement learning to this problem.
 
 \section{Introduction}
-The major deep learning frameworks such as TensorFlow \cite{tensorflow2015-whitepaper} and PyTorch \cite{pytorch} used greedy rule-based graph transformation prior to execution. Furthermore, in Chapter \ref{sec:bg:subsec:currentapp} we described the prior work upon which this work builds. Namely, we introduced the work by Jia et al. \cite{jia2019taso,jia2019optimizing} that proposed an approach for performing an offline optimisation of deep learning computation graphs using a recursive backtracking search in the action space. Specifically, the authors developed a framework that uses a pre-generated set of formally verified, semantically equivalent graph substitutions that can be used to modify the graph to search for a reduced runtime.
+The major deep learning frameworks such as TensorFlow \cite{tensorflow2015-whitepaper} and PyTorch \cite{pytorch} used greedy rule-based graph transformation prior to execution. Furthermore, in Chapter \ref{sec:bg:subsec:currentapp} we described the prior work upon which this work builds. Namely, we introduced the work by \citet{jia2019taso,jia2019optimizing} who proposed an approach, called TASO, for performing offline optimisation of deep learning computation graphs using a recursive backtracking search in the action space. Specifically, the authors developed a framework that uses a pre-generated set of formally verified, semantically equivalent graph substitutions that can be used to modify the graph to search for a reduced runtime.
 
 \section{Optimisation of deep learning graphs}
 
@@ -19,12 +19,12 @@ On the other hand, although Grappler can automatically optimise the data-flow gr
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.75\columnwidth]{sections/3problem/images/GraphOptimiser.jpg}
+  \includegraphics[width=0.75\columnwidth]{sections/3problem/images/GraphOptimiser}
   \caption[Architecture of graph optimisation system in TensorFlow]{The machine learning model is processed prior to execution by either Grappler, the static graph optimiser in TensorFlow, or via JIT compilation of the model using XLA. Figure adapted from \cite{larsen2019tensorflow}.}
   \label{fig:problem:graph-optim}
 \end{figure}
 
-Alternatively, both TensorFlow, and more recently PyTorch, support automatic graph optimisation by JIT (just-in-time) compilation through XLA and the \texttt{torch.jit} package respectively. In Figure \ref{fig:problem:graph-optim} we can see a high-level view of the components of the optimisation system. In order to motivate the reasoning to perform offline optimisation rather than JIT optimisation we  consider the work proposed by Jia et al. in both MetaFlow and TASO, the systems they design can be used as a drop-in replacement of the Grappler and/or XLA compilation steps.
+Alternatively, both TensorFlow, and more recently PyTorch, support automatic graph optimisation by JIT (just-in-time) compilation through XLA and the \texttt{torch.jit} package respectively. In Figure \ref{fig:problem:graph-optim} we can see a high-level view of the components of the optimisation system. In order to motivate the reasoning to perform offline optimisation rather than JIT optimisation we consider the work proposed in both MetaFlow and TASO. The systems they designed can be used as a drop-in replacement of the Grappler and/or XLA compilation steps.
 
 TASO applies all possible candidate transformations at each step and estimates the runtime (or cost) of the final graph. Next, TASO chooses the highest performing candidates for the proceeding iteration of candidate evaluations. Principally, this approach is superior to the naive greedy optimisation approach as we can use the estimated runtime to guide the search and forego immediate improved runtime to increase the potential search space of candidate graphs.
 
@@ -40,12 +40,12 @@ Next, we define that two computation graphs, $\mathcal{G}$ and $\mathcal{G}'$ ar
 
 An important problem in graph-level optimisation is that of defining a set of varied, applicable transformations that can be used to optimise the graphs. As previously noted, prior work such as TensorFlow use a manually defined set of transformations and optimise greedily. On the other hand, TASO uses a fully automatic method to generate candidate transformations by performing a hash-based enumeration over all possible DNN operators that result in a semantically equivalent computation graph.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
   % preliminary
   \sbox\twosubbox{%
     \resizebox{\dimexpr.9\textwidth-1em}{!}{%
-      \includegraphics[height=3cm]{sections/3problem/images/rewrite1.jpg}%
-      \includegraphics[height=3cm]{sections/3problem/images/rewrite2.jpg}%
+      \includegraphics[height=3cm]{sections/3problem/images/rewrite1}%
+      \includegraphics[height=3cm]{sections/3problem/images/rewrite2}%
     }%
   }
   \setlength{\twosubht}{\ht\twosubbox}
@@ -53,10 +53,10 @@ An important problem in graph-level optimisation is that of defining a set of va
   % typeset
   \centering
   \subcaptionbox{Tensor renaming substitution \label{fig:problem:rewrite-graph1}}{
-    \includegraphics[height=\twosubht]{sections/3problem/images/rewrite1.jpg}
+    \includegraphics[height=\twosubht]{sections/3problem/images/rewrite1}
   }\quad
   \subcaptionbox{Common subgraph substitution \label{fig:problem:rewrite-graph2}}{
-    \includegraphics[height=\twosubht]{sections/3problem/images/rewrite2.jpg}
+    \includegraphics[height=\twosubht]{sections/3problem/images/rewrite2}
   }
   \caption[Two examples of trivial graph substitutions]{Two examples of trivial graph substitutions that does not impact the overall runtime of the computation graph. The left sub-figure shows a simple renaming of the tensor inputs. The figure on the right shows that we have a common sub-graph between the source and the target graphs. In both cases we eliminate the duplicates as the hash of the two graphs will be identical.}
 \end{figure}
@@ -68,11 +68,11 @@ In this work, we take the same approach as that of TASO and automatically genera
 \subsection{Baselines}
 In order to establish a baseline performance measure for performing graph-level optimisation of deep learning models we have two different sources. Firstly, we can measure the performance of a select number of deep learning models in the standard DL frameworks, TensorFlow and PyTorch. In this project, there are common, standardised mechanisms for evaluating the performance of models using these frameworks - we show the results of the baseline measurements in the following section.
 
-Secondly, in this work, we replicate the experiments as performed by Jia et al. \cite{jia2019taso} and use the results as our benchmark to compare our work against. However, for the majority of evaluated graphs we used a lower budget than that of the authors in the original paper. We found that using a lower search budget, without alteration of the hyperparameter $\alpha$, it did not result in a lower performance compared to the original experiments.
+Secondly, in this work, we replicate the experiments as performed in TASO and use the results as our benchmark to compare our work against, the results of which are presented in \ref{sec:eval:subsec:baseline}. However, for the majority of evaluated graphs we used a lower budget than that of the authors in the original paper. We found that using a lower search budget, without alteration of the hyperparameter $\alpha$, did not result in a lower performance compared to the original experiments.
 
 %Figure [TODO] shows the results of the heuristic search for the graph $\mathcal{G}^*$ and Figure [TODO] shows the relative performance of the methods on each chosen deep learning model. 
 
-We further note that Jia et al. \cite{jia2019taso} used a simple method to estimate the runtime of tensor operators that are executed using low-level CUDA APIs and the runtime is averaged over $N$ forward passes.However, this approach to runtime estimation is imperfect as there is a non-negligible variance of the runtime on real hardware. We investigated the use of using real runtime measurements during training rather than a estimation of operator runtime. We found that it increases duration of each training step such that performance improvements are not worth the trade-off.
+We further note that TASO used a simple method to estimate the runtime of tensor operators that are executed using low-level CUDA APIs and the runtime is averaged over $N$ forward passes.However, this approach to runtime estimation is imperfect as there is a non-negligible variance of the runtime on real hardware. We investigated the use of using real runtime measurements during training rather than a estimation of operator runtime. We found that it increases duration of each training step such that performance improvements are not worth the trade-off.
 
 \section{Reinforcement Learning formulation}
 In the following section we will describe how to represent the computation graph optimisation problem in the reinforcement learning domain by describing the key components of the system. We describe the system environment in which the agents act, the state-action space, and finally the reward functions for both the model-free and model-based agents which we used to determine the optimal reward signal to train the agents.
@@ -82,9 +82,16 @@ In the following section we will describe how to represent the computation graph
 
 In order to train a reinforcement learning agent, it necessary that we have access to an environment that, given the current environment state, the agent can take an action. After taking the chosen action, the environment is updated into a new state and the agent receives a reward signal. Typically, one uses a mature environment such as OpenAI Gym \cite{brockman2016openai} or OpenSpiel \cite{LanctotEtAl2019OpenSpiel} as the quality of the environment often has a significant effect on the stability of training. Moreover, using an environment that uses a common interface allows researchers to implement algorithms with ease and, importantly, reproduce results from published conference papers.
 
-In our work, we implemented an environment that follows the OpenAI Gym API standard stepping an environment, that is, we have a function \texttt{step(action)} that accepts a single parameter, the action requested by the agent to be performed in the environment. The \texttt{step} function returns a 4-tuple \texttt{(next\textunderscore state, reward, terminal, extra\textunderscore info)}. \texttt{extra\textunderscore info} is a dictionary which can store arbitrary data. The environment in our project has a structure that is shown diagrammatically in Figure [TODO].
+In our work, we implemented an environment that follows the OpenAI Gym API standard stepping an environment, that is, we have a function \texttt{step(action)} that accepts a single parameter, the action requested by the agent to be performed in the environment. The \texttt{step} function returns a 4-tuple \texttt{(next\textunderscore state, reward, terminal, extra\textunderscore info)}. \texttt{extra\textunderscore info} is a dictionary which can store arbitrary data. The environment in our project has a structure that is shown diagrammatically in figure \ref{fig:problem:sys-env}.
 
-To simplify the implementation of the environment, we used made extensive use of the work by Jia et al. \cite{jia2019taso} with the open source version of TASO. We provide a computation graph and the chosen transformation and location; TASO then applies the requested transformation and returns the newly transformed graph. Further, we use internal TASO functions that calculates estimates of the runtime on the hardware device which we use as our reward signal for training the agent. During our experiments we modified TASO to extract detailed runtime measurements to analyse the rewards using a range of different reward formulae - we describe our approach further in section \ref{sec:prob:subsec:rwd}.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.75\columnwidth]{sections/3problem/images/sysenv}
+  \caption[RL system environment]{Data flow between components of the RL system. Although this diagram shows the setup for both the training of the model-free and model-based world model, we can use the environment in figure \ref{fig:bg:mb-rl} as a drop-in replacement of the environment to train the model-based controller.}
+  \label{fig:problem:sys-env}
+\end{figure}
+
+To simplify the implementation of the environment, we used made extensive use of the work by Jia et al. \cite{jia2019taso} with the open source version of TASO. We provide a computation graph and the chosen transformation and location; TASO then applies the requested transformation and returns the newly transformed graph. Further, we use internal TASO functions that calculates estimates of the runtime on the hardware device which we use as our reward signal for training the agent. During our experiments we modified TASO to extract detailed runtime measurements to analyse the rewards using a range of different reward formulae---we provide more detail in section \ref{sec:prob:subsec:rwd}.
 
 The scope of our work meant that there was no existing prior work that applied reinforcement learning to the task of optimising deep learning computation graphs. Thus, we required an environment in which an agent can act efficiently. Due to the nature of systems environments, the interactions with the real-world environment can be often slow, especially compared to those such as Arcade Learning Environment \cite{Bellemare_2013}. An aim of this work was to train a simulated environment, a ``world model'', that if accurate in relation to the real environment, we can train an agent far more efficiently than would be possible with the real-environment. In sections \ref{sec:rlopt:subsec:mb-agent} and \ref{sec:eval:subsec:mbagent} we will further explore world models and evaluate our implementation respectively.
 
