@@ -22,6 +22,23 @@ To interface with the internal representation of the computation graphs, as prev
 \subsection{Graphs Used}
 \label{sec:eval:subsec:graphsused}
 
+\begin{table}[htbp]
+  \centering
+  \resizebox{\columnwidth}{!}{
+    \begin{tabular}{@{}llll@{}}
+      \toprule
+                    & Type          & Inference Time (ms) & Memory Used (GiB) \\ \midrule
+      InceptionV3   & Convolutional &                     &                   \\
+      ResNet-18     & Convolutional &                     &                   \\
+      ResNet-50     & Convolutional &                     &                   \\
+      SqueezeNet1.1 & Convolutional &                     &                   \\
+      BERT          & Transformer   &                     &                   \\ \bottomrule
+      \end{tabular}
+  }
+  \caption[Properties of evaluation graphs]{Properties of the five evaluation graphs used in the experiments contained in this chapter.}
+  \label{table:eval:graph-props}
+\end{table}
+
 We chose to use five real-world deep learning models to evaluate our project. InceptionV3 \cite{szegedy2015rethinking} is a common, high-accuracy model for image classification trained on the ImageNet dataset \footnote{\url{https://image-net.org/index.php}}. ResNet-18 \& ResNet-50 \cite{he2015deep} are also deep convolutional networks, 18 and 50 layers deep respectively as well as SqueezeNet \cite{iandola2016squeezenet}, a shallower yet accurate model. BERT \cite{devlin2019bert} is a recent large transformer network that has been to improve Google search results \cite{nayak2019}. As these graph were also used in the evaluation of TASO \cite{jia2019taso}, we can show a direct comparison of the performance between the different approaches.
 
 \section{Experiments}
@@ -167,13 +184,13 @@ In an attempt to resolve the issues highlighted above, we performed further expe
   2.5          & -10.04\% $\pm$ 2.0\%         & -41.14\% $\pm$ 12.2\%         \\
   3.0          & -10.38\% $\pm$ 1.9\%         & -51.32\% $\pm$ 7.2\%         \\ \bottomrule
   \end{tabular}
-  \caption[Rewards using range of temperatures]{Temperature sweep of trained model-based agent optimising the BERT network.}
+  \caption[Rewards using range of temperatures]{Temperature sweep of trained model-based agent optimising the BERT network. We ran each experiment five times and show both the average performance improvement as well as the variance between runs.}
   \label{table:eval:agent-temperatures}
 \end{table}
 
 Table \ref{table:eval:agent-temperatures} shows the results from performing a temperature sweep in which we used different values of $\tau$ while training the agent in a world model. After training, we evaluated the agent which produced an optimised graph that we evaluated to determine average runtime. The table shows the average reduction in runtime and standard deviation, averaged over five runs, compared to the unoptimised graph. The motivation for using a range of temperatures is that a higher value of $\tau$ leads to softer targets for the agent to predict, thereby improving generalisation. Conversely, a lower value of $\tau$ presents hard targets and thus when $\tau = 1.0$, it is equivalent to using the unmodified mixing weight, $\pi$, of the MDN.
 
-Based upon the results in table \ref{table:eval:agent-temperatures} from the conducted experiments, we note that the world model agents are stable to temperatures within the range of $\tau = 0.5$ to $\tau = 1.75$. Although the runtime improvement world-model from the environment is consistently above 6\%, we observe a large difference between the predicted runtime improvement and the real environment reward. Despite the experiments performed in section \ref{sec:eval:subsubsec:wm-acc} which shows a low MSE between the predicted and real scores, during evaluation we see a large divergence between the two scores. Therefore, we performed further experiments to evaluate the performance of the agents inside the world-model using a composite model in which the reward prediction is conducted in a separately trained network.
+Based upon the results in table \ref{table:eval:agent-temperatures} from the conducted experiments, we note that the world model agents are stable to temperatures within the range of $\tau = 0.5$ to $\tau = 1.75$. Although the runtime improvement world-model from the environment is consistently above 6\%, we observe a large difference between the predicted runtime improvement and the real environment reward. Despite the experiments performed in section [TODO] \ref{sec:eval:subsubsec:wm-acc} which shows a low MSE between the predicted and real scores, during evaluation we see a large divergence between the two scores. Therefore, we performed further experiments to evaluate the performance of the agents inside the world-model using a composite model in which the reward prediction is conducted in a separately trained network.
 
 [TODO include results from separate reward prediction network]
 
