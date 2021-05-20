@@ -55,12 +55,19 @@ In this section, we will establish the baseline performance results from prior w
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/baseline_runtimes}
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_baseline}
   \caption[Baseline runtimes of optimised graphs]{Runtime of optimised graphs using the three baseline optimisation methods.}
   \label{fig:eval:baseline-runtimes}
 \end{figure}
 
 Figure \ref{fig:eval:baseline-runtimes} shows the runtime of each optimised graph described in section \ref{sec:eval:subsec:graphsused} using the three baseline methods, TensorFlow \cite{tensorflow2015-whitepaper}, TensorRT \cite{tensorrt2017} and TASO \cite{jia2019taso}. We observe that TASO outperforms TensorFlow Grappler and TensorRT on BERT by 50.5\% and 43.6\% respectively. On the other hand, with convolutional networks, the optimised graph discovered by TASO has a runtime within $\pm 6$\% compared to TensorRT. Furthermore, we note that during our reproduction of the results found by Jia et al. \cite{jia2019taso}, we used the same value of $\alpha = 1.05$ and a search budget of 50,000 steps. TASO often found the optimal graph within $\sim$5000 steps and the remaining computation steps failed to further improve the estimated runtime.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/taso_graph_search}
+  \caption[TASO search]{TASO search plot}
+  \label{fig:eval:baseline-taso-search}
+\end{figure}
 
 %\subsubsection{TASO}
 
@@ -76,15 +83,14 @@ In this section we describe our experiments performed using the model-free agent
   \label{fig:eval:mf-agent-runtimes}
 \end{figure}
 
-
-Figure \ref{fig:eval:mf-agent-reward} shows the reward produced by the model-free agent acting inside the real environment for each graph. Due to the difference in estimated runtime between graphs, we used min-max normalisation to scale the rewards into the same range. First and foremost, it is evident that the graph optimisation using the model-free agent reward converge quickly after only $\sim$1000 epochs with low variation in the average epoch rewards after convergence.
-
 \begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mf_training_reward}
   \caption[Epoch reward during training of model-free agent]{Normalised reward of model-free agent produced by the real environment in response to selected actions by the agent}
   \label{fig:eval:mf-agent-reward}
 \end{figure}
+
+Figure \ref{fig:eval:mf-agent-reward} shows the reward produced by the model-free agent acting inside the real environment for each graph. Due to the difference in estimated runtime between graphs, we used min-max normalisation to scale the rewards into the same range. First and foremost, it is evident that the graph optimisation using the model-free agent reward converge quickly after only $\sim$1000 epochs with low variation in the average epoch rewards after convergence.
 
 [TODO include results from experiments with reward functions]
 

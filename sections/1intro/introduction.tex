@@ -3,9 +3,10 @@
 This dissertations key contributions are:
 
 \begin{itemize}
-  \item Applied modern reinforcement learning approaches to tackle a recent problem common in all machine learning frameworks to reduce the significant engineering time required to manually design, implement and test optimisation rules for computation graphs.
-  \item Implemented a model-based RL agent and environment that are used to directly optimising the structure of computation graphs to reduce real-world runtime and compare performance to current baseline results.
-  \item This work, to the best of our knowledge, is the first that has applied model-based reinforcement learning to optimising the structure of computation graphs.
+  \item Applies modern reinforcement learning approaches that eliminates the need for human engineered graph optimisations in machine learning frameworks.
+  \item Provides a detailed discussion and analysis of our solution as well as comparison to the current state-of-the-art methods in published literature.
+  \item Implemented a model-based RL agent (section [TODO]), and environment (section [TODO]), for jointly choosing the optimal substitution and substitution location (section [TODO]).
+  \item This work, to the best of our knowledge, is the first that has applied model-based reinforcement learning in optimising computation graphs to reduce hardware resource requirements.
 \end{itemize}
 
 The rest of the dissertation is structured as follows. Chapter 2 provides a background for computation graphs and the representation of deep learning models, reinforcement learning---both model-free and model-based---in the context of computer systems. Chapter 3 concretely introduces the problem we are trying to solve and provides baselines produced by prior works and formulate the problem in the context of reinforcement learning. Chapter 4 describes our approach to applying reinforcement learning to choose substitutions to optimise the computation graphs as well as learning an accurate model of the environment. Chapter 5 covers the evaluation setup, our experiments and results for different methodologies. Finally, in chapter 6 we conclude the dissertation with a summary of our findings and discuss potential future work.
