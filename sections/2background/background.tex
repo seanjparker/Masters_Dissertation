@@ -22,19 +22,52 @@ Similarly, the whole model can be converted into a stateful dataflow (computatio
 \subsection{Current approaches to optimising deep learning models}
 \label{sec:bg:subsec:currentapp}
 
+In this section, we describe the two approaches to performing optimisation of computation graphs. First, we describe rule-based optimisation which is the simplest method in which we use a set of hard-coded rules to greedily apply graph transformations. Secondly, we describe performant, cost-based approaches which use heuristics to plan and apply optimisations automatically. We discuss these two approaches in section \ref{sec:bg:subsec:rbo} and section \ref{sec:bg:subsec:cbo} respectively.
+
+\subsubsection{Rule-based Optimisation}
+\label{sec:bg:subsec:rbo}
+
 Due to the prevalence and importance of machine learning, especially deep networks, there is a focus on finding ways decrease the inference runtime and by extension, increasing the model throughput. All major frameworks such as TensorFlow \cite{tensorflow2015-whitepaper}, PyTorch \cite{pytorch}, MXNet \cite{chen2015mxnet}, and Caffe \cite{jia2014caffe} have some level of support for performing pre-execution optimisations. However, the process of performing such optimisations is often time-consuming and cannot be completed in real-time. Rather, it is common to use a deep learning optimisation library such as cuDNN \cite{chetlur2014cudnn} or cuBLAS \cite{cublas2008} that instead directly optimise individual tensor operations.
+
+TensorFlow (TF) uses a system called \textit{``Grappler''} that is the default graph optimisation system in the TF runtime \cite{larsen2019tensorflow}. By natively performing the graph optimisation at runtime, it allows for a interoperable, transparent optimisation strategy via protocol buffers. To improve the performance of the underlying model, Grappler supports a range of features such as the pruning of dead nodes, removal of redundant computation and improved memory layouts. Concretely, Grappler was designed with three primary goals:
+
+\begin{itemize}
+  \item Automatically improve performance through graph simplifications and high-level optimisations to benefit the most target architectures
+  \item Reduce device peak memory usage
+  \item Improve hardware utilisation by optimising device placement
+\end{itemize}
+
+Although Grappler can automatically optimise the data-flow graphs of deep learning models, such a complex optimisation system presents challenges. Firstly, significant engineering effort is required to implement, verify and test the optimiser to ensure the correctness of the graph rewrites rules; TF contains a set of 155 substitutions that are implemented in 53,000 lines of code; to further complicate matters, new operators are continuously proposed, such as grouped or transposed convolutions, all of which leads to a large amount effort expended to maintain the library. Secondly, and perhaps more importantly, as TF uses Grappler at runtime by default, it adds overhead to execution as extra graph conversions are performed at runtime rather than offline.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.75\columnwidth]{sections/3problem/images/GraphOptimiser}
+  \caption[Architecture of graph optimisation system in TensorFlow]{The machine learning model is processed prior to execution by either Grappler, the static graph optimiser in TensorFlow, or via JIT compilation of the model using XLA. Figure adapted from \cite{larsen2019tensorflow}.}
+  \label{fig:problem:graph-optim}
+\end{figure}
+
+Alternatively, both TensorFlow, and more recently PyTorch, support automatic graph optimisation by JIT (just-in-time) compilation through XLA and the \texttt{torch.jit} package respectively. In Figure \ref{fig:problem:graph-optim} we can see a high-level view of the components of the optimisation system. In order to motivate the reasoning to perform offline optimisation rather than JIT optimisation we consider the work proposed in both MetaFlow and TASO. The systems they designed can be used as a drop-in replacement of the Grappler and/or XLA compilation steps.
+
+Finally, both TVM \cite{chen2018tvm} and TensorRT \cite{tensorrt2017} can be used to optimise deep learning models and offer greater performance gains compared to the more commonly used frameworks such as TensorFlow and PyTorch. These DNN compilers also use greedy rule-based optimisation as part of the optimisation pipeline.
 
 %common machine learning framework is designed to greedily apply a set of pre-defined substitutions to an input graph in an attempt to optimise the graph. TensorFlow made use of low-level libraries such as cuBLAS \cite{cublas2008} for optimised matrix operations and cuDNN \cite{chetlur2014cudnn} for convolutional kernels.
 
 %TensorRT \cite{tensorrt2017} provides a high-performance SDK to optimise the inference of models via a combination of techniques such as layout and tensor fusion, auto-tuning kernels, and multi-stream execution. The SDK acts as both the optimisation and execution engine that lies between the ML framework and physical hardware. Importantly, it is not involved during the training process, rather, it assumes for the best possible performance that the developer 
 
-Alternatively, TVM \cite{chen2018tvm} and TensorRT \cite{tensorrt2017} can be used to optimise deep learning models and offer greater performance gains compared to the more commonly used frameworks such as TensorFlow and PyTorch. These DNN compilers also use greedy rule-based optimisation as part of the optimisation pipeline.
-
 %TODO - either expand or remove
 
-Rather than using a rule-based optimisation approach, it is possible to use more sophisticated algorithms to optimise deep learning models at the expense of computation time. \citet{jia2019taso} developed TASO that used a cost-based backtracking search to iteratively search through the state space of possible graphs that are formally equivalent. In contrast to using rule-based optimisation that applied hand-crafted optimisations heuristically, TASO generates the candidate subgraphs automatically and formally proves the transformations are equivalent using an automated theorem prover. Furthermore, TASO showed that by jointly optimising both the data layout of the subgraph transformation and the transformation itself, it achieves a further improvement compared to performing the two operations sequentially.
+\subsubsection{Cost-based Optimisation}
+\label{sec:bg:subsec:cbo}
 
-A key benefit of using a cost-based approach is that the search can take into account far more complex interactions between the transformed kernels. For example, if we apply a series of transformations $T_1, \cdots, T_i$, the runtime may increase, and, due to the first set of transformations, we can now apply $T_{i + 1}, \cdots, T_{j}$, after all transformations have been applied, it is possible that we see an overall decrease in runtime. By increasing the search space of transformations in this way, TASO showed that it is possible to increase the runtime of deep learning models by up to 3x \cite{jia2019taso, jia2019optimizing}, compared to baseline measurements using various deep learning compilers \cite{ chetlur2014cudnn, cublas2008, tensorrt2017}.
+As opposed to using a rule-based optimisation approach, it is possible to use more sophisticated algorithms to optimise deep learning models---at the expense of computation time. \citet{jia2019taso} developed TASO that used a cost-based backtracking search to iteratively search through the state space of possible graphs that are formally equivalent. In contrast to using rule-based optimisation that applied hand-crafted optimisations heuristically, TASO generates the candidate subgraphs automatically and formally proves that the transformations are equivalent using an automated theorem prover.
+
+\input{sections/3problem/taso}
+
+A key benefit of using a cost-based approach is that the search can take into account far more complex interactions between the transformed kernels. For example, if we apply a series of transformations $T_1, \cdots, T_i$, the runtime may increase, and, due to the first set of transformations, we can now apply $T_{i + 1}, \cdots, T_{j}$, after all transformations have been applied, it is possible that we see an overall decrease in runtime. By increasing the search space of transformations in this way, TASO showed that it is possible to increase the runtime of deep learning models by up to 3x \cite{jia2019taso, jia2019optimizing}, compared to baseline measurements using various deep learning compilers \cite{ chetlur2014cudnn, cublas2008, tensorrt2017}. Principally, this approach is superior to the naive greedy optimisation as we can use the estimated runtime to guide the search and sacrifice immediate runtime improvement to increase the potential search space of candidate graphs.
+
+% TASO applies all possible candidate transformations at each step and estimates the runtime (or cost) of the final graph. Next, TASO chooses the highest performing candidates for the proceeding iteration of candidate evaluations.
+
+In addition, as TASO operates at the graph-level, its optimisations are completely orthogonal to operator-level optimisations; thus, it can be combined with code generation techniques such as TVM \cite{chen2018tvm} or Astra \cite{sivathanu2019astra} to further improve overall performance. We also note that TASO performs tensor data layout and graph transformation simultaneously rather than sequentially. It has been shown that by considering it as a joint optimisation problem end-to-end inference runtime can be further reduced by up to 1.5x \cite{jia2019taso, jia2019optimizing} compared to the baseline optimisation.
 
 
 \section{Reinforcement Learning}
@@ -88,6 +121,8 @@ Typically, a world model is trained using rollouts of the real environment that 
 
 \subsubsection{Mixture Density Networks}
 Mixture Density Networks (MDNs) are a class of neural networks first described by Christopher Bishop \cite{bishop1994mixture} that were designed to deal with problems where there is an inherent uncertainty in the predictions. Given an input to the network, we wish to output a range of possible outputs conditioned on the input where we can assess the probability of each outcome. MDNs are commonly parameterised by a neural network that is trained using supervised learning and outputs the parameters for multiple mixture of Gaussians.
+
+MDNs can be used to learn to output parameters to a probabilistic Gaussian mixture model (GMMs) \cite{bishop1994mixture}. A GMM is a function that is composed of several gaussians, each given a label $k \in \lbrace 1, \ldots, K \rbrace$, where $K$ is the number of components. Each gaussian is formed from three parameters $\mu_i$, the mean of component $i$, $\sigma_i$ the variance of component $i$ and $\pi$ the mixing probability/weight of each component. Unlike the networks used in supervised learning tasks that are trained using regression, training a GMM instead attempts to maximise the likelihood that the gaussians fit the data points in each minibatch. Inside a world model we use the predictions of an MDN at time $t$ to choose the parameters of the gaussian distribution for the next latent vector at time $t+1$. Notably, one can either use expectation maximisation to find the parameters of the model, or alternatively, can use a parameterised GMM which is trained in conjunction with the RNN using stochastic gradient descent.
 
 \subsubsection{Recurrent Neural Networks}
 Recurrent Neural Networks are class of neural networks that allows for previous outputs to be re-used as inputs to sequential nodes while maintaining and updating their own hidden state. Primarily, RNNs are commonly used in the field of speech recognition and natural language processing as they can process inputs of an arbitrary length with a constant model size. In practise however, RNNs suffer from being unable to utilise long chains of information due to the vanishing/exploding gradient problem; the gradient can change exponentially changing in proportion to the number of layers in the network \cite{Hochreiter:01book}.
