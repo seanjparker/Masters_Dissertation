@@ -25,17 +25,16 @@ To interface with the internal representation of the computation graphs, as prev
 \begin{table}[htbp]
   \centering
   \resizebox{\columnwidth}{!}{
-    \begin{tabular}{@{}llll@{}}
+    \begin{tabular}{@{}llllll@{}}
       \toprule
-                    & Type          & Inference Time (ms) & Memory Used (GiB) \\ \midrule
-      InceptionV3   & Convolutional &                     &                   \\
-      ResNet-18     & Convolutional &                     &                   \\
-      ResNet-50     & Convolutional &                     &                   \\
-      SqueezeNet1.1 & Convolutional &                     &                   \\
-      BERT          & Transformer   &                     &                   \\ \bottomrule
+                    & InceptionV3   & ResNet-18     & ResNet-50     & SqueezeNet1.1 & BERT        \\ \midrule
+      Type          & Convolutional & Convolutional & Convolutional & Convolutional & Transformer \\
+      Layers        & 43            & 18            & 50            & 21            & 12          \\
+      Unique Layers & 12            & 6             & 6             & 3             & 3           \\
+      Actions       & 56            & 40            & 228           & 288           & 80          \\ \bottomrule
       \end{tabular}
   }
-  \caption[Properties of evaluation graphs]{Properties of the five evaluation graphs used in the experiments contained in this chapter.}
+  \caption[Properties of evaluation graphs]{Properties of the five evaluation graphs used in the experiments contained in this chapter. We differentiate the total number of layers in a network from the number of unique layers used in composing the network to provide a more accurate representation of its complexity.}
   \label{table:eval:graph-props}
 \end{table}
 
@@ -43,8 +42,8 @@ We chose to use five real-world deep learning models to evaluate our project. In
 
 \section{Experiments}
 
-\subsection{Hyperparameter Selection}
-[TODO]
+%\subsection{Hyperparameter Selection}
+%[TODO]
 
 \subsection{Baselines}
 \label{sec:eval:subsec:baseline}
@@ -56,7 +55,7 @@ In this section, we will establish the baseline performance results from prior w
 \begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_baseline_h}
-  \caption[Baseline runtimes of optimised graphs]{Runtime of optimised graphs using the three baseline optimisation methods.}
+  \caption[Baseline runtimes of optimised graphs]{Runtime of optimised graphs using the three baseline optimisation methods. The x-axis shows the relative runtime improvement, a higher relative runtime is better.}
   \label{fig:eval:baseline-runtimes}
 \end{figure}
 
@@ -65,11 +64,11 @@ Figure \ref{fig:eval:baseline-runtimes} shows the runtime of each optimised grap
 \begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/taso_graph_search}
-  \caption[TASO search]{TASO search plot}
+  \caption[TASO backtracking search]{We show the estimated runtime improvement, normalised between the minimum and maximum obtained runtimes, for each tested graph. We performed each experiment five times and show the 95\% confidence interval for each graph. We also note that we clipped the plot as after 5000 steps, there was no increase in performance for the remaining 45000 search steps.}
   \label{fig:eval:baseline-taso-search}
 \end{figure}
 
-%\subsubsection{TASO}
+Figure \ref{fig:eval:baseline-taso-search} shows a plot of the runtime estimated by TASO at each step in the search. We repeated each experiment five times and show the confidence interval for each graph. Based upon the results, we observe that TASO did not just take the longest to discover the optimised graph, the variance between runs was the highest compared to other graphs. One reason for this disparity is that it has a vastly different architecture; BERT is a transformer network which, compared to convolution networks, has a greater breadth than depth. As such, when TASO performs the backtracking search, there are far more initial locations in the graph where a substitution can be applied.
 
 \subsection{Model-Free Agent}
 \label{sec:eval:subsec:mfagent}
@@ -79,7 +78,7 @@ In this section we describe our experiments performed using the model-free agent
 \begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_mf_h}
-  \caption[Runtimes of optimised graphs using MF-RL]{Runtime of optimised graphs using an agent trained using the model-free PPO algorithm. We also show the baseline results as comparison.}
+  \caption[Runtimes of optimised graphs using MF-RL]{Runtime of optimised graphs using an agent trained using the model-free PPO algorithm. We also show the baseline results as comparison. The x-axis shows the relative runtime improvement, a higher relative runtime is better.}
   \label{fig:eval:mf-agent-runtimes}
 \end{figure}
 
@@ -106,7 +105,7 @@ Figure \ref{fig:eval:world-model-runtimes} shows the runtime of the optimised gr
 \begin{figure}[h]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/runtimes_all_h}
-  \caption[Runtimes of optimised graphs using a model-based controller]{Runtime of optimised graphs using an agent trained using the model-based world model. We also show the baseline results as comparison.}
+  \caption[Runtimes of optimised graphs using a model-based controller]{Runtime of optimised graphs using an agent trained using the model-based world model. We also show the baseline results as comparison. The x-axis shows the relative runtime improvement, a higher relative runtime is better.}
   \label{fig:eval:world-model-runtimes}
 \end{figure}
 
@@ -117,7 +116,7 @@ Compared to the strictly model-free agent that was trained in the real environme
 Furthermore, an important consideration when training inside a systems environment is the wall-clock time for stepping the environment to a new state based upon the agent action. We analysed the time required to perform a single step while training the ResNet50 graph. We found that stepping the world model (performing inference of the world-model) takes, on average, 10ms whereas stepping the real environment takes on average 850ms. Thus, although the performance of the model-based agent was comparatively lower, our wall-clock time for required for training was reduced by a factor of 85x.
 
 \subsubsection{Memory Usage}
-blah blah blah blahblah blah blah blahblah blah
+[TODO]
 % Table of memory usage
 \begin{table}[htbp]
   \centering
@@ -158,9 +157,11 @@ TODO explain more!
   \label{fig:eval:world-model-pred-reward}
 \end{figure}
 
-Figure \ref{fig:eval:world-model-pred-reward} shows the reward (decrease in estimated runtime) for each graph as predicted by the world model during training. As the tested graphs have a wide range of epoch rewards, we perform min-max normalisation to scale the plots into the same range. We observe the same results as figure \ref{fig:eval:world-model-runtimes} in which the optimisations applied to BERT during training results in the optimal graph found after 700 epochs. On the other hand, graphs such as ResNet 18/50 are less stable during training with a high epoch to epoch variation in rewards.
+Figure \ref{fig:eval:world-model-pred-reward} shows the reward (decrease in estimated runtime) for each graph as predicted by the world model during training. As the tested graphs have a wide range of epoch rewards, we perform min-max normalisation to scale the plots into the same range. We observe the same results as figure \ref{fig:eval:world-model-runtimes} in which the optimisations applied to BERT during training results in the optimal graph found after 700 epochs. On the other hand, graphs such as ResNet 18/50 are less stable during training with a high epoch to epoch variation in rewards. In comparison to the rewards received by the model-free agent during training, we note that the strictly model-free agent was more stable during training, and additionally, consistently found the optimised graph after approximately 1000 epochs.
 
-In comparison to the rewards received by the model-free agent during training, we note that the strictly model-free agent was more stable during training, and additionally, consistently found the optimised graph after approximately 1000 epochs. Although if we assume that both the model-free and model-based agents should achieve a similar level in performance once trained, the results in figure \ref{fig:eval:world-model-pred-reward} and \ref{fig:eval:mf-agent-reward} show that the agents trained in the world model are less stable with a higher reward variance. We hypothesise that there are three factors for such a discrepancy to occur:
+\subsubsection{Discussion}
+
+If we assume that both the model-free and model-based agents should achieve a similar level in performance once trained, the results in figure \ref{fig:eval:world-model-pred-reward} and \ref{fig:eval:mf-agent-reward} show that the agents trained in the world model are less stable with a higher reward variance. We hypothesise that there are three factors for such a discrepancy to occur:
 
 \begin{itemize}
   \item Imperfect world-model reward predictions leading to incorrect (or invalid) actions being performed
@@ -168,7 +169,7 @@ In comparison to the rewards received by the model-free agent during training, w
   \item Incorrect action mask predictions that would lead to a divergence in between the world-model state and real environment state 
 \end{itemize}
 
-In an attempt to resolve the issues highlighted above, we performed further experiments which we believe would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model, shown in section \ref{sec:eval:subsec:temp-sweep}. Secondly, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate network to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$.
+In an attempt to resolve the issues highlighted above, we performed further experiments which we believe would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model, shown in section \ref{sec:eval:subsec:temp-sweep}. Secondly, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate network to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$. [TODO]
 
 
 \subsubsection{Temperature Sweep}
