@@ -174,7 +174,11 @@ If we assume that both the model-free and model-based agents should achieve a si
   \item Incorrect action mask predictions that would lead to a divergence in between the world-model state and real environment state 
 \end{itemize}
 
-In an attempt to resolve the issues highlighted above, we performed further experiments which we believe would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. Firstly, we performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model, shown in section \ref{sec:eval:subsec:temp-sweep}. Secondly, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate network to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$. [TODO finish]
+In an attempt to resolve the issues highlighted above, we performed further experiments which we believe would aid in both reducing the variance in reward prediction as well as stabilise the world-model during training to prevent state divergence over time. We performed a temperature sweep of the hyperparameter $\tau$ which is used in training agent inside the world model, shown in section \ref{sec:eval:subsec:temp-sweep}.
+
+% Secondly, we also investigated splitting the prediction components of the world model such that we do not predict the next state, rewards, terminals and masks in a single model. Rather, we use a separate network to perform reward prediction using the hidden state, $h_t$ from the MDN-RNN as well as the latent graph state $s_t$.
+
+% [TODO finish]
 
 
 \subsubsection{Temperature Sweep}

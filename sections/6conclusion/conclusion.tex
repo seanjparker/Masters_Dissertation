@@ -2,4 +2,15 @@
 
 \section{Conclusion}
 
+In this work, we have shown the result of applying deep reinforcement learning techniques to the task of optimising deep neural networks. Our approach uses RL agents to select optimal actions that optimise the computation graphs with the goal of improving on-device runtime. We performed experiments that show RL agents decreased the runtime on all of the five test graphs, each of which had unique properties and architectures. Notably, we provide evidence to support our claim that it is possible to learn a world-model of the environment which is sufficiently accurate to enable the end-to-end training of an agent inside a fully imagined world-model. Furthermore, by leveraging the prior work by Jia et al., we developed a deeply instrumented environment in which we can train model-free agents and train world-models for model-based agents.
+
+In addition, this work has highlighted that the performance of model-based agents trained inside a world-model is highly dependent on the accuracy of the model. Inaccuracies in the model, can lead to compounding errors and thus the agent choosing sub-optimal, or invalid, actions that diverges the imaged state from the true environment state. Therefore, there are still significant fundamental difficulties in training stable, accurate world-models that can simulate the true environment; if one can train such a model by carefully tuning hyperparameters, we can gain substantial benefits through increased sample efficiency and decreased training time.
+
 \section{Future Work}
+
+% In this work, we used a relatively simple mapping procedure to convert the TASO graph representation into a format that can be utilised by the \texttt{graph\textunderscore nets} package. 
+% - Mapping computation graphs to GNN
+
+In this work, we have presented an approach to using message-passing neural networks to exploit the relational biases in the graph structure of the input and produce a embedding of the graph in latent space. One possible direction for future work is to investigate the use of graph auto-encoders \cite{battaglia2018relational} to produce a reconstructed graph which can be used for planning. Recent work \cite{hafner2018learning, sekar2020planning} has shown that using an accurate world-model, we can exploit the model to plan our actions into the future state space to gain higher performance than would be possible using single-step state predictions.
+
+Model-based reinforcement learning is an active area of research and recent work has shown significant improvement in the performance of model-based methods on tasks in which model-free methods traditionally excel. \citet{hafner2021mastering} show that using discrete world models that learn directly in latent space using planning, actor-critic agents can surpass model-free in the Atari environment. We propose that a future direction of work can be to investigate the use of discrete world models with actor-critic agents that offer greatly stability during training and learn more accurate world models which is especially critical to the performance of agents in system environments.
