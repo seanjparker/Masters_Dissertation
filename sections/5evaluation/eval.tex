@@ -31,7 +31,7 @@ To interface with the internal representation of the computation graphs, as prev
       Type          & Convolutional & Convolutional & Convolutional & Convolutional & Transformer \\
       Layers        & 43            & 18            & 50            & 21            & 12          \\
       Unique Layers & 12            & 6             & 6             & 3             & 3           \\
-      Actions       & 56            & 40            & 228           & 288           & 80          \\ \bottomrule
+      Substitutions & 56            & 40            & 228           & 288           & 80          \\ \bottomrule
       \end{tabular}
   }
   \caption[Properties of evaluation graphs]{Properties of the five evaluation graphs used in the experiments contained in this chapter. We differentiate the total number of layers in a network from the number of unique layers used in composing the network to provide a more accurate representation of its complexity.}
@@ -232,8 +232,6 @@ Notably, although the state-action prediction and the terminal state prediction 
 
 Finally, the primary takeaway from these experiments is that reinforcement learning, especially model-based methods, are extremely powerful and can learn to model complex dynamic systems and provide important benefits. Nonetheless, we note that such methods still suffer instability during training, and imperfections in the world-model leads to agent exploitation of the faulty environment and therefore poor performance in the real environment---tuning of the world-model hyperparameters remains vital to producing a stable, performant agent. 
 % TODO List:
-
-% - Memory used by graphs after performing optimisation
 
 % - Hyperparameter search
 
