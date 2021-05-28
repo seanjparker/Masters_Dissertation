@@ -94,7 +94,29 @@ Figure \ref{fig:eval:mf-agent-reward} shows the reward produced by the model-fre
 \subsubsection{Reward functions}
 \label{sec:eval:subsec:mf:subsubsec:rwd-func}
 
-[TODO include results from experiments with reward functions]
+As we described in section \ref{sec:prob:subsec:rwd}, the design of the reward function used in the training of RL agents is a pivotal part of the agents architecture. In this section, we analyse our proposed reward functions and the effect on the convergence as well as final performance of the trained agents.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/pairplot_bert.pdf}
+  \caption[Pairwise plot of correlation between runtime metrics]{We show the pairwise correlation between the detailed runtime metrics recorded directly from the TASO environment while training on the BERT graph. We note the strong correlation between the number of memory accesses and estimated runtime improvement.}
+  \label{fig:eval:pairplot-bert}
+\end{figure}
+
+Figure \ref{fig:eval:pairplot-bert} shows the pairwise relationship between the four detailed runtime measurements which we record at each step of the training process for the BERT graph. We collected the runtime, FLOPS, memory access and number of kernel launches and show the relationship between the values. We note that the estimated runtime and memory accesses have a strong correlation; when the memory access decreases, we see a notable decrease in estimated runtime. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\columnwidth]{sections/5evaluation/images/mf_reward_func.eps}
+  \caption[Agent reward using various reward functions]{We show the normalised reward of each agent using various reward functions while being trained for 500 epochs. R1 uses the second reward function with tuned parameters, R2 uses new runtime reward, R3 uses $\alpha=0.1, \beta=0.9$, R4 uses $\alpha=0.5, \beta=0.5$ and finally, R5 uses incremental runtime improvement.}
+  \label{fig:eval:mf-reward-funcs}
+\end{figure}
+
+Figure \ref{fig:eval:mf-reward-funcs} shows the effect on convergence of model-free RL agents while training on the BERT graph using various reward functions. Significantly, using a standard, yet naive approach of the first reward function described in section \ref{sec:prob:subsec:rwd} shows that the model-free agent improves at a linear rate as shown by R4 in figure \ref{fig:eval:mf-reward-funcs}. Whereas, using the second reward function and tuned hyperparameters of $\alpha$ and $\beta$, shown by R1, converges the fastest.
+
+However, the rate of convergence does not show the whole picture of the agents performance. We note that the highest performing agent, after the restricted 500 epoch training time, was R1 with an average runtime improvement of $48.7 \pm 3.2\%$. Surprisingly, the second highest performing agent was the agent using R4, the simplest reward function from the set tested, with a performance of $43.2 \pm 2.3\%$.
+
+In order to find the values of hyperparameters $\alpha$ and $\beta$ which results in the agent with the maximum performance, we performed a grid search for $\alpha$ and $\beta = 1 - \alpha$ between the values of $[0, 1]$; we searched between the bounds in increments of $0.1$. After training each agent for 500 epochs and evaluate the performance of each agent three times, we found that the reward function resulting in the highest performance was using the values $0.8$ and $0.2$ for $\alpha$ and $\beta$ respectively.
 
 \subsection{Model-based Agent}
 \label{sec:eval:subsec:mbagent}

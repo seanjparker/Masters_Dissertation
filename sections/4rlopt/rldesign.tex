@@ -89,7 +89,7 @@ r_t =
 \end{cases}
 $$
 
-Using the reward function defined above, we use the previous estimated runtime, $RT_{t-1}$ of the computation graph and the estimated runtime of the current graph, $RT_t$, to determine the step-wise, incremental change in graph runtime as the reward. This simple, yet powerful function has the benefit of a very low overhead as we only need to store the last runtime. Furthermore, as our primary goal is to reduce the execution time of the graphs, rather than for example the system memory, it captures our desired metric for which we wish to optimise.
+Using the reward function defined above, we use the previous estimated runtime, $RT_{t-1}$ of the computation graph and the estimated runtime of the current graph, $RT_t$, to determine the step-wise, incremental change in graph runtime as the reward. This simple, yet powerful function has the benefit of a very low overhead as we only need to store the last runtime. Furthermore, as our primary goal is to reduce the execution time of the graphs, rather than for example the system memory, it captures our desired metric which we wish to optimise.
 
 Secondly, we instrumented TASO to extract detailed metrics in an attempt to engineer a more complex reward function; we used the runtime, FLOPS, memory accesses and kernel launches to perform experiments to determine if using a combination of the metrics could yield a higher performance RL agent. We defined modified reward function as shown below; where $RT$ is the graph runtime, $M$ is the memory accesses, $\alpha$ and $\beta$ are two hyperparameters for weighting the runtime and memory accesses respectively.
 
