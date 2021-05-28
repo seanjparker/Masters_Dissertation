@@ -15,7 +15,7 @@ Throughout this chapter, we aim to answer these questions by a series of experim
 
 \section{Experimental Setup}
 
-All the experiments presented in this chapter, both training various agent models and testing, is performed using the codebase available in the GitLab repository for this project [todo: link]. The project was developed, and the experiments were performed using a single machine running Ubuntu Linux 18.04 with a 6-core Intel i7-10750H@2.6GHz, 16GB RAM and an NVIDIA GeForce RTX 2070.
+All the experiments presented in this chapter, both training various agent models and testing, is performed using the codebase available in the GitLab repository for this project \footnote{\url{https://www.gitlab.com/CamRL/xflowrl}}. The project was developed, and the experiments were performed using a single machine running Ubuntu Linux 18.04 with a 6-core Intel i7-10750H@2.6GHz, 16GB RAM and an NVIDIA GeForce RTX 2070.
 
 To interface with the internal representation of the computation graphs, as previously discussed, we used the open-sourced version of TASO \cite{jia2019taso} which we modified to extract detailed runtime information. Further, we implemented the reinforcement learning algorithms in TensorFlow 2 \cite{tensorflow2015-whitepaper} and utilised the \texttt{graph\textunderscore nets} package developed by Battaglia et al. \cite{battaglia2018relational} to process our input graphs which we described in chapter \ref{sec:prob:subsec:sysenv}. The PPO agent was implemented based upon the implementation provided by Schulman et al. \cite{schulman2017proximal}.
 
@@ -38,7 +38,7 @@ To interface with the internal representation of the computation graphs, as prev
   \label{table:eval:graph-props}
 \end{table}
 
-We chose to use five real-world deep learning models to evaluate our project. InceptionV3 \cite{szegedy2015rethinking} is a common, high-accuracy model for image classification trained on the ImageNet dataset \footnote{\url{https://image-net.org/index.php}}. ResNet-18 \& ResNet-50 \cite{he2015deep} are also deep convolutional networks, 18 and 50 layers deep respectively as well as SqueezeNet \cite{iandola2016squeezenet}, a shallower yet accurate model. BERT \cite{devlin2019bert} is a recent large transformer network that has been to improve Google search results \cite{nayak2019}. As these graph were also used in the evaluation of TASO \cite{jia2019taso}, we can show a direct comparison of the performance between the different approaches.
+We chose to use five real-world deep learning models to evaluate our project. InceptionV3 \cite{szegedy2015rethinking} is a common, high-accuracy model for image classification trained on the ImageNet dataset \footnote{\url{https://image-net.org/index.php}}. ResNet-18 \& ResNet-50 \cite{he2015deep} are also deep convolutional networks that are 18 and 50 layers deep respectively. SqueezeNet \cite{iandola2016squeezenet} is a shallower yet accurate model on the same ImageNet dataset. BERT \cite{devlin2019bert} is a recent large transformer network that has been to improve Google search results \cite{nayak2019}. As these graph were also used in the evaluation of TASO \cite{jia2019taso}, we can show a direct comparison of the performance between the different approaches.
 
 \section{Experiments}
 
