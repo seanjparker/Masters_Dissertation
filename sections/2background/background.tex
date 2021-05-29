@@ -84,7 +84,7 @@ Formally, RL is a class of learning problem that can be framed as a Markov decis
 \end{itemize}
 
 % TODO: add citations
-We aim to compute a policy, denoted by $\pi$, that when given a state $s \in \mathcal{S}$, returns an action $a \in \mathcal{A}$ with the optimisation objective being to find a control policy $\pi^*$ that maximises the \textit{expected reward} from the environment defined by \ref{equ:expec-rew}. Importantly, we can control the `far-sightedness' of the policy by tuning the discount factor $\gamma \in [0, 1)$. As $\gamma$ tends to 1, the policy will consider the rewards further in the future but with a lower weight as the distant expected reward may be an imperfect prediction.
+We aim to compute a policy, denoted by $\pi$, that when given a state $s \in \mathcal{S}$, returns an action $a \in \mathcal{A}$ with the optimisation objective being to find a control policy $\pi^*$ that maximises the \textit{expected reward} from the environment defined by \ref{equ:expec-rew}. Importantly, we can control the `far-sightedness' of the policy by tuning the discount factor $\gamma \in [0, 1)$. As $\gamma$ tends to 1, the policy will consider the rewards further in the future but with a lower weight as the distant expected reward may be an imperfect prediction \cite{bellman1957}.
 
 \begin{equation}
   \label{equ:expec-rew}
