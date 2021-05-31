@@ -163,7 +163,7 @@ Furthermore, an important consideration when training inside a systems environme
   \label{table:eval:graph-mem-usage}
 \end{table}
 
-Table \ref{table:eval:graph-mem-usage} shows the percentage improvement of both the inference time and the memory used for performing inference on the optimised models. Importantly, although we tasked the agent to optimise for reducing the runtime of the graphs, we observe an unindented secondary effect of a reduction in memory usage of up to 4.5\% over the baseline TensorFlow model.
+Table \ref{table:eval:graph-mem-usage} shows the percentage improvement of both the inference time and the memory used for performing inference on the optimised models. Importantly, although we tasked the agent to optimise for reducing the runtime of the graphs, we observe an unintended secondary effect of a reduction in memory usage of up to 4.5\% over the baseline TensorFlow model.
 
 \subsubsection{World-model accuracy}
 \label{sec:eval:subsubsec:wm-acc}
@@ -260,7 +260,7 @@ As we have previously claimed, there are many benefits to using a world model as
 Figure \ref{fig:eval:xfer-heatmap} shows a heatmap of the various graph transformations which have been applied by a trained model-free agent during evaluation. Notably, the optimisations applied to the ResNet18/50 graphs apply similar transformations, those targeting the convolutions in the network; as the networks are composed of alike convolutional operators, with different depths, we apply analogous transformations. On the otherhand, for recurrent networks such as BERT, we only apply relatively few transformations. This is in stark contrast to the series of transformations found by TASO which applies four distinct substitutions in comparison to the two applied by our approach. Despite the large disparity in both the specific transformations as well as number of times we applied transformations, the performance difference between TASO and our proposed method is small.
 
 \section{Discussion}
-Throughout this chapter we have evaluated our claims which we formed in the introduction. We have provided the results to various experiments covering the reinforcement of our baseline measurements and those which show the performance of the proposed agents. Overall, we have found that all our proposed polices outperform the baseline TensorFlow optimisation strategy. However, in some cases, our agents failed to outperform the optimisations found by TensorRT and TASO.
+Throughout this chapter we have evaluated our claims which we formed in the introduction. We have provided the results to various experiments covering the reinforcement of our baseline measurements and those which show the performance of the proposed agents. Overall, we have found that our proposed approach outperforms the TensorFlow optimisation strategy on all graphs. However, in some cases, namely the deeper convolutional networks such as ResNet50 and InceptionV3, our agents failed to apply optimisations that outperform those performed by TensorRT and TASO.
 
 In examining the model-based agent performance, we found that a world-model is able to accurately learn and simulate the transition dynamics of an environment, showing that despite the complex nature of the state-action transitions the world-model is flexible to learn its behaviour and adapt to previously unseen state-action pairs. 
 
