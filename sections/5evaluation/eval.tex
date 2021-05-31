@@ -214,12 +214,12 @@ In an attempt to resolve the issues highlighted above, we performed further expe
   0.1          & -6.67\% $\pm$ 0.6\%          & -43.92\% $\pm$ 5.1\%         \\
   0.5          & -7.75\% $\pm$ 0.3\%          & -55.33\% $\pm$ 6.7\%         \\
   0.75         & -9.10\% $\pm$ 0.4\%          & -55.80\% $\pm$ 5.2\%         \\
-  1.0          & -8.85\% $\pm$ 1.2\%          & -55.78 $\pm$ 8.0\%           \\
-  1.2          & -9.91\% $\pm$ 0.8\%          & -57.01\% $\pm$ 4.8\%         \\
-  \textbf{1.5} & \textbf{-8.37\% $\mathbf{\pm}$ 0.6\%} & \textbf{-58.23\% $\mathbf{\pm}$ 5.2\%} \\
-  1.75         & -9.92\% $\pm$ 1.0\%          & -52.07\% $\pm$ 6.8\%         \\
-  2.0          & -9.65\% $\pm$ 0.8\%          & -46.12\% $\pm$ 5.9\%         \\
-  2.5          & -10.04\% $\pm$ 2.0\%         & -41.14\% $\pm$ 12.2\%         \\
+  1.0          & -8.85\% $\pm$ 1.2\%          & -55.78 $\pm$ 4.0\%           \\
+  1.2          & -9.91\% $\pm$ 0.8\%          & -57.01\% $\pm$ 3.9\%         \\
+  \textbf{1.5} & \textbf{-8.37\% $\mathbf{\pm}$ 0.6\%} & \textbf{-58.23\% $\mathbf{\pm}$ 3.6\%} \\
+  1.75         & -9.92\% $\pm$ 1.0\%          & -52.07\% $\pm$ 5.8\%         \\
+  2.0          & -9.65\% $\pm$ 0.8\%          & -46.12\% $\pm$ 5.4\%         \\
+  2.5          & -10.04\% $\pm$ 2.0\%         & -41.14\% $\pm$ 10.2\%         \\
   3.0          & -10.38\% $\pm$ 1.9\%         & -51.32\% $\pm$ 7.2\%         \\ \bottomrule
   \end{tabular}
   \caption[Rewards using range of temperatures]{Temperature sweep of trained model-based agent optimising the BERT network. We ran each experiment five times and show both the average performance improvement as well as the variance between runs.}
@@ -236,14 +236,15 @@ Based upon the results in table \ref{table:eval:agent-temperatures} from the con
 
 \subsubsection{Agent Convergence}
 
-
-
 \begin{figure}[ht]
   \centering
   \includegraphics[width=1\columnwidth]{sections/5evaluation/images/agent_convergence.pdf}
-  \caption[Convergence line plots of MF and MB approaches]{test}
+  \caption[Convergence line plots of MF and MB approaches]{Agent reward and loss for model-free and model-based agents shown on the left (blue) and right (orange) respectively. We trained the agents on the BERT graph for 1000 epochs and repeated the experiments five times. We show the 95\% confidence interval in the shaded area of each plot.}
   \label{fig:eval:agent-mf-mb-convg}
 \end{figure}
+
+As we have previously claimed, there are many benefits to using a world model as the environment where we train the controller agent. In Figure \ref{fig:eval:agent-mf-mb-convg} we show the agent reward and loss during training for 1000 epochs on the BERT graph using model-free (MF) and model-based (MB) agents. Also, we used the results from our previous temperature sweep experiment by choosing the temperature $\tau = 1.5$ for use when training the controller. We found that the model-based agent, when trained using tuned hyperparameters, was more stable than the MF agent trained inside the real environment; the variance between runs was lower for the model-based agent compared to the MF agent. However, we found that the variance in the optimised runtime of the models produced by the MF agent was larger than the MB agent, with a variance of $6.1\%$ and $3.6\%$ respectively.
+
 
 \subsubsection{Graph transformations}
 
