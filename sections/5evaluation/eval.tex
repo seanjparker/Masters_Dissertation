@@ -124,6 +124,7 @@ In order to find the values of hyperparameters $\alpha$ and $\beta$ which result
 In this section we first present the results for training an agent inside a world model for each graph individually. Secondly, we compare the model-based agent performance to baseline measurements as well as showing the change in memory usage which is a by product from the applying graph transformations in order to reduce runtime. Furthermore, we also discuss the impact of hyperparameter selection on the agent performance as well as showing the accuracy of the world model in regards to graph reward prediction.
 
 \subsubsection{Runtime Performance}
+\label{sec:eval:subsec:mb:sec:runtimeperf}
 
 Figure \ref{fig:eval:world-model-runtimes} shows the runtime of the optimised graphs for the model-based agents trained inside the fully hallucinogenic world model. Each agent was trained inside a world model using rollouts from its respective graph as described in section \ref{sec:rlopt:subsec:actionctrl}. We trained the agents for a maximum of 1000 epochs, in mini-batches of 10 epochs. Additionally, we used a fixed learning rate for both the policy and value networks during training of the controller agent network.
 
@@ -237,6 +238,7 @@ Based upon the results in table \ref{table:eval:agent-temperatures} from the con
 % [TODO include results from separate reward prediction network]
 
 \subsubsection{Agent Convergence}
+\label{sec:eval:subsec:agent-conv}
 
 \begin{figure}[ht]
   \centering
