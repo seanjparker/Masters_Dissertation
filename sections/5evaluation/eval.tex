@@ -143,6 +143,17 @@ Compared to the strictly model-free agent that was trained in the real environme
 
 Furthermore, an important consideration when training inside a systems environment is the wall-clock time for stepping the environment to a new state based upon the agent action. We analysed the time required to perform a single step while training the ResNet50 graph. We found that stepping the world model (performing inference of the world-model) takes, on average, 10ms whereas stepping the real environment takes on average 850ms. Thus, although the performance of the model-based agent was comparatively lower, our wall-clock time for required for training was reduced by a factor of 85x.
 
+\subsubsection{Optimisation Time}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\columnwidth]{sections/5evaluation/images/optimisation_time}
+  \caption[Optimisation time for TASO and MB-RL]{Time required to generate the optimised model using a model-based approach compared to TASO}
+  \label{fig:eval:optimisation-time}
+\end{figure}
+
+Figure \ref{fig:eval:optimisation-time} shows the optimisation time required to generate the optimised graph of the tested models. We note that the optimisation time for the model-based agent does not include the time required to learn the world model nor training the controller in the environment. The optimisation time is measured as the the wall-clock time to perform $n$ agent steps to generate the optimised graph using our RL agents. Thus, although TASO has a longer optimisation time compared to the RL agent, TASO only requires us to perform the cost-based search a single time.
+
 \subsubsection{Memory Usage}
 
 % Table of memory usage
