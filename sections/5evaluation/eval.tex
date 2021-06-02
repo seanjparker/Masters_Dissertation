@@ -6,7 +6,7 @@ In this chapter, we look to assess aims we presented at the beginning of this wo
 
 \begin{enumerate}
   \item Are model-based reinforcement learning methods able to model the transition dynamics of the environment?
-  \item Is the agent policies able to generalise to unseen states of the same graph to act in accordance to our performance objectives?
+  \item Are the agent policies able to generalise to unseen states of the same graph to act in accordance to our performance objectives?
   \item Do the world models accurately model the reward estimation from the graphs latent state?
   \item Are the agents trained in an imagined world model applicable to the real-world environment?
 \end{enumerate}
@@ -17,7 +17,7 @@ Throughout this chapter, we aim to answer these questions by a series of experim
 
 All the experiments presented in this chapter, both training various agent models and testing, is performed using the codebase available in the GitLab repository for this project \footnote{\url{https://www.gitlab.com/CamRL/xflowrl}}. The project was developed, and the experiments were performed using a single machine running Ubuntu Linux 18.04 with a 6-core Intel i7-10750H@2.6GHz, 16GB RAM and an NVIDIA GeForce RTX 2070.
 
-To interface with the internal representation of the computation graphs, as previously discussed, we used the open-sourced version of TASO \cite{jia2019taso} which we modified to extract detailed runtime information. Further, we implemented the reinforcement learning algorithms in TensorFlow 2 \cite{tensorflow2015-whitepaper} and utilised the \texttt{graph\textunderscore nets} package developed by Battaglia et al. \cite{battaglia2018relational} to process our input graphs which we described in chapter \ref{sec:prob:subsec:sysenv}. The PPO agent was implemented based upon the implementation provided by Schulman et al. \cite{schulman2017proximal}.
+To interface with the internal representation of the computation graphs, as previously discussed, we used the open-sourced version of TASO \cite{jia2019taso} which we modified to extract detailed runtime information. Further, we implemented the reinforcement learning algorithms in TensorFlow 2 \cite{tensorflow2015-whitepaper} and utilised the \texttt{graph\textunderscore nets} package developed by Battaglia et al. \cite{battaglia2018relational} to process our input graphs using the method which we described in chapter \ref{sec:prob:subsec:sysenv}. The PPO agent was implemented based upon the implementation provided by Schulman et al. \cite{schulman2017proximal}.
 
 \subsection{Graphs Used}
 \label{sec:eval:subsec:graphsused}
@@ -103,7 +103,7 @@ As we described in section \ref{sec:prob:subsec:rwd}, the design of the reward f
   \label{fig:eval:pairplot-bert}
 \end{figure}
 
-Figure \ref{fig:eval:pairplot-bert} shows the pairwise relationship between the four detailed runtime measurements which we record at each step of the training process for the BERT graph. We collected the runtime, FLOPS, memory access and number of kernel launches and show the relationship between the values. We note that the estimated runtime and memory accesses have a strong correlation; when the memory access decreases, we see a notable decrease in estimated runtime. 
+Figure \ref{fig:eval:pairplot-bert} shows the pairwise relationship between the four detailed runtime measurements which we record at each step of the training process for the BERT graph. We collected the runtime, FLOPS, memory access and number of kernel launches and show the relationship between the quantities. We note that the estimated runtime and memory accesses have a strong correlation; when the memory access decreases, we see a notable decrease in estimated runtime. 
 
 \begin{figure}[h]
   \centering
@@ -121,7 +121,7 @@ In order to find the values of hyperparameters $\alpha$ and $\beta$ which result
 \subsection{Model-based Agent}
 \label{sec:eval:subsec:mbagent}
 
-In this section we first present the results for training an agent inside a world model for each graph individually. Secondly, we compare the model-based agent performance to baseline measurements as well as showing the change in memory usage which is a by product from the applying graph transformations in order to reduce runtime. Furthermore, we also discuss the impact of hyperparameter selection on the agent performance as well as showing the accuracy of the world model in regards to graph reward prediction.
+In this section we first present the results for training an agent inside a world model for each graph individually. Next, we compare the model-based agent performance to baseline measurements as well as showing the change in memory usage which is a by product from the applying graph transformations in order to reduce runtime. Furthermore, we also discuss the impact of hyperparameter selection on the agent performance as well as showing the accuracy of the world model in regards to graph reward prediction.
 
 \subsubsection{Runtime Performance}
 \label{sec:eval:subsec:mb:sec:runtimeperf}
@@ -148,7 +148,7 @@ Furthermore, an important consideration when training inside a systems environme
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.75\columnwidth]{sections/5evaluation/images/optimisation_time}
-  \caption[Optimisation time for TASO and MB-RL]{Time required to generate the optimised model using  model-based RL and TASO}
+  \caption[Optimisation time for TASO and MB-RL]{Time required to generate the optimised model using model-based RL and TASO. In all cases, the optimisation time using our proposed approach is lower than that of TASO.}
   \label{fig:eval:optimisation-time}
 \end{figure}
 
@@ -162,7 +162,7 @@ Figure \ref{fig:eval:optimisation-time} shows the optimisation time required to 
   \resizebox{\columnwidth}{!}{
     \begin{tabular}{@{}ccccc@{}}
       \toprule
-      \multicolumn{1}{l}{} & \multicolumn{2}{c}{Baseline (TF)}                                         & \multicolumn{2}{c}{Optimised (MB-RL)} \\ \midrule
+      \multicolumn{1}{l}{} & \multicolumn{2}{c}{TensorFlow}                                         & \multicolumn{2}{c}{Optimised (MB-RL)} \\ \midrule
       \multicolumn{1}{l}{} & \multicolumn{1}{l}{Inf. time (ms)} & \multicolumn{1}{l}{Mem. usage (GiB)} & \multicolumn{2}{c}{\% Improvement}    \\
       ResNet18      & 12.2 & 1.18 & 3.0\%  & 1.1\% \\
       ResNet50      & 26.7 & 2.34 & 1.0\%  & 0.6\% \\
@@ -175,7 +175,7 @@ Figure \ref{fig:eval:optimisation-time} shows the optimisation time required to 
   \label{table:eval:graph-mem-usage}
 \end{table}
 
-Table \ref{table:eval:graph-mem-usage} shows the percentage improvement of both the inference time and the memory used for performing inference on the optimised models. Importantly, although we tasked the agent to optimise for reducing the runtime of the graphs, we observe an unintended secondary effect of a reduction in memory usage of up to 4.5\% over the baseline TensorFlow model.
+Table \ref{table:eval:graph-mem-usage} shows the percentage improvement of both the inference time and the memory used for performing inference on the optimised models. Importantly, although we tasked the agent to optimise for reducing the runtime of the graphs, we observe an unintended secondary effect of a reduction in memory usage of up to 4.5\% over the TensorFlow model.
 
 \subsubsection{World-model accuracy}
 \label{sec:eval:subsubsec:wm-acc}
@@ -258,7 +258,7 @@ Based upon the results in table \ref{table:eval:agent-temperatures} from the con
   \label{fig:eval:agent-mf-mb-convg}
 \end{figure}
 
-As we have previously claimed, there are many benefits to using a world model as the environment where we train the controller agent. In Figure \ref{fig:eval:agent-mf-mb-convg} we show the agent reward and loss during training for 1000 epochs on the BERT graph using model-free (MF) and model-based (MB) agents. Also, we used the results from our previous temperature sweep experiment by choosing the temperature $\tau = 1.5$ for use when training the controller. We found that the model-based agent, when trained using tuned hyperparameters, was more stable than the MF agent trained inside the real environment; the variance between runs was lower for the model-based agent compared to the MF agent. However, we found that the variance in the optimised runtime of the models produced by the MF agent was larger than the MB agent, with a variance of $6.1\%$ and $3.6\%$ respectively.
+As we have previously claimed, there are many benefits to using a world model as the environment where we train the controller agent. In Figure \ref{fig:eval:agent-mf-mb-convg} we show the agent reward and loss during training for 1000 epochs on the BERT graph using model-free (MF) and model-based (MB) agents. Also, we used the results from our previous temperature sweep experiment by choosing the temperature $\tau = 1.5$ for use when training the controller. We found that the model-based agent, when trained using tuned hyperparameters, was more stable than the MF agent trained inside the real environment; the variance between runs was lower for the MB agent compared to the MF agent. However, we found that the variance in the optimised runtime of the models produced by the MF agent was larger than the MB agent, with a variance of $6.1\%$ and $3.6\%$ respectively.
 
 
 \subsubsection{Graph transformations}
@@ -270,7 +270,7 @@ As we have previously claimed, there are many benefits to using a world model as
   \label{fig:eval:xfer-heatmap}
 \end{figure}
 
-Figure \ref{fig:eval:xfer-heatmap} shows a heatmap of the various graph transformations which have been applied by a trained model-free agent during evaluation. Notably, the optimisations applied to the ResNet18/50 graphs apply similar transformations, those targeting the convolutions in the network; as the networks are composed of alike convolutional operators, with different depths, we apply analogous transformations. On the otherhand, for recurrent networks such as BERT, we only apply relatively few transformations. This is in stark contrast to the series of transformations found by TASO which applies four distinct substitutions in comparison to the two applied by our approach. Despite the large disparity in both the specific transformations as well as number of times we applied transformations, the performance difference between TASO and our proposed method is small.
+Figure \ref{fig:eval:xfer-heatmap} shows a heatmap of the various graph transformations which have been applied by a trained model-free agent during evaluation. Notably, the optimisations applied to the ResNet18/50 graphs apply similar transformations, those targeting the convolutions in the network; as the networks are composed of alike convolutional operators, with different depths, we apply analogous transformations. On the otherhand, for recurrent networks such as BERT, we only apply relatively few transformations. This is in stark contrast to the series of transformations found by TASO which applies four distinct substitutions in comparison to the two applied by our approach. Despite the large disparity in both the specific transformations as well as number of times we applied transformations, the performance difference between TASO and our proposed method is small. This shows that there are many optimisation paths to achieve a large reduction in runtime.
 
 \section{Discussion}
 Throughout this chapter we have evaluated our claims which we formed in the introduction. We have provided the results to various experiments covering the reinforcement of our baseline measurements and those which show the performance of the proposed agents. Overall, we have found that our proposed approach outperforms the TensorFlow optimisation strategy on all graphs. However, in some cases, namely the deeper convolutional networks such as ResNet50 and InceptionV3, our agents failed to apply optimisations that outperform those performed by TensorRT and TASO.
